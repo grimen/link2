@@ -1,0 +1,9 @@
+en:
+  links:
+    home: "Home"
+    back: "Back"
+    new: "New {{resource}}"
+    edit: "Edit {{resource}}"
+    delete: "Delete {{resource}}"
+    show: "Show {{resource}}"
+    index: "Index of {{resources}}"

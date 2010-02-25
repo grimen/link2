@@ -1,0 +1,211 @@
+h1. LINK²
+
+_Generation next *link_to*-helper for Rails: Spiced with intelligence, and semantic beauty._
+
+h2. Introduction
+
+A better link helper for Rails designed with the principle of making smart assumptions based on what's known to avoid repeated and unnecessary code declarations; and at the same time making the code more semantic/readable/beautiful (my subjective opinion). On top of that - for even more maintainable views - scoped I18n translations without lean defaults for fast prototyping. WIN-WIN-WIN.
+
+This is *not* a re-implementation of @link_to@/@button_to@-helpers; rather it wraps these but parses the specified method arguments and extracts as much known information as possible to fill in the missing pieces. The core helpers are not altered at all: You can call them old-school like there was no tomorrow (after using Link2 for a while you'll spoiled and the core helpers will feel so yesterday, really).
+
+*Goals/Features:*
+
+* Rapid prototyping-friendly link helpers - with no trade-offs, really.
+* Based on specified arguments: Use what's know to make smart assumptions => DRYer - and more maintainable view code.
+* Use power of I18n: Lookup scoped translations based on action, model, etc., for more flexible translations - with lean defaults. Enhanced with some nifty interpolation features as well. Code first, translate later.
+* Full test-coverage for stability.
+* Well-documented code.
+
+h2. Dependencies
+
+* "rails 2.3.x":http://github.com/rails/rails only. Might as well work with Rails 3 already, but I didn't write that.
+
+For testing: test-unit, and "left-right":http://github.com/jordi/leftright.
+
+h2. Installation
+
+"Drop a *Gem* on 'em":http://open.spotify.com/track/2pqKuHtn8ZKMMMqbJrA2e7:
+
+<pre>
+  $ sudo gem install link2
+</pre>
+
+h2. Setup
+
+Generate initializer (optional):
+
+<pre>
+  $ ./script/generate link2
+</pre>
+
+h2. Usage
+
+*A few examples* using the spiced up @link_to@/@button_to@ helpers, using our trusty fellow *Post* class:
+
+<pre>
+  link "No operation"
+    # => link_to 'No operation', '#'
+
+  link "Hilarious", 'http://bash.org'
+    # => link_to 'No operation', 'http://bash.org'
+
+  link 'http://bash.org'
+    # => link_to 'http://bash.org', 'http://bash.org'
+
+  link :home
+    # => link_to I18n.t(:home, ...), root_path
+
+  link :back
+    # => link_to I18n.t(:home, ...), :back
+
+  link @post
+    # => link_to I18n.t(:show, ...), post_path(@post)
+
+  link [@post, @comment]
+    # => link_to I18n.t(:show, ...), post_comment_path(@post, @comment)
+
+  link :new, :post
+    # => link_to I18n.t(:new, ...), new_post_path
+
+  link :new, Post
+    # => link_to I18n.t(:new, ...), new_post_path
+
+  link :new, @post
+    # => link_to I18n.t(:new, ...), new_post_path(:id => @post.id)  # ...if you think about it; useful for cloning.
+
+  link :edit, @post
+    # => link_to I18n.t(:edit, ...), edit_post_path(@post)
+
+  link :edit, [@post, @comment]
+    # => link_to I18n.t(:edit, ...), edit_post_comment_path(@post, @comment)
+
+  link :kick, @post
+    # => link_to I18n.t(:kick, ...), kick_post_path(@post)
+
+  link "New one!", :new, Post
+    # => link_to "New one!", new_post_path
+
+  link :new, UserSession { image_tag('sign_in_button.png') }
+    # => link_to image_tag('sign_in_button.png'), new_user_session_path
+
+  ...
+</pre>
+
+...and for the record (not yet implemented, but soon):
+
+<pre>
+  link :edit, [@post, @comment]
+    # => ::Link2::NotImplementedYetError, "case link(:action, [...]) not yet supported. Need to refactor some stuff."
+
+  link :new
+    # => ::Link2::NotImplementedYetError, "Auto-detection of resource is not supported yet."
+</pre>
+
+Same works for @button_to@, and you also can optionally use the branded aliases: @link2@ and @button2@.
+
+h2. Options hashes: URL Options + HTML Options
+
+Link2 link helpers accept options in the same way as the core helpers @link_to@/@button_to@: first @options@ (a.k.a. @url_options@) and then @html_options@. See the "Rails core UrlHelpers documentation":http://railsapi.com/doc/rails-v2.3.5/classes/ActionView/Helpers/UrlHelper.html#M002452 for details on this. Link2 helpers just pass any non-Link2-related options to the Rails core helpers. In other words no need to learn a new API; just pass the needed options like in the past.
+
+h2. Expected arguments
+
+A summary of the expected argument flavors if the examples for the curious minds:
+
+<pre>
+  link(label, options = {}, html_options = {})
+  link(url, options = {}, html_options = {}, &content_block)
+  link(resource, options = {}, html_options = {}, &content_block)
+
+  link(label, url, options = {}, html_options = {})
+  link(action, resource, options = {}, html_options = {}, &content_block)
+
+  link(label, action, resource)
+</pre>
+
+Same applies to the @button@ helper, naturally.
+
+h2. I18n
+
+Link2 was designed with the power of I18n in mind; following certain lookup patterns to make it easier to manage link-translations even as your Rails-app grows. This is how in short:
+
+*1. Lookup scopes* (Optional)
+
+This is the default lookup order, in priority order:
+
+<pre>
+  Link2.setup do |config|
+    config.i18n_scopes = [
+        '{{models}}.links.{{action}}',
+        'links.{{action}}'
+      ]
+  end
+</pre>
+
+Valid lookup scope interpolations:
+
+* @model@ - link model name, e.g. CaptainMorgan / @captain_morgan => "captain_morgan"
+* @models@ - pluralized link model name, e.g. CaptainMorgan / @captain_morgan => "captain_morgans"
+* @controller@ - current controller name
+* @action@ - the link action name
+
+*2. Translations* (Optional)
+
+<pre>
+  en:
+    links:
+      order: "Bartender!!"
+      drink: "Drink your {{resource}} now"
+    captain_morgans:
+      links:
+        order: "New barrel of rum with lime, ohoy!"
+        drink: "Slurp {{name}} like a pirate"
+</pre>
+
+Valid value interpolations:
+
+* @resource@ - resource humanized name (parsed with I18n if possible), e.g. CaptainMorgan / @captain_morgan => "captain morgan"
+* @resources@ - pluralized resource humanized name (parsed with I18n if possible), e.g. CaptainMorgan / @captain_morgan => "captain morgans"
+* @name@ - current resource name to_s-value, e.g. @captain_morgan.to_s => "Captain Morgan with Cola and lime #4"
+
+*3. Label parsing* (Optional)
+
+Customize @to_s@ for your model(s) to return a more humane string.
+
+<pre>
+  class CaptainMorgan < ActiveRecord::Base
+    def to_s
+      "Captain ##{self.id}"
+    end
+  end
+</pre>
+
+*4. Go*
+
+Now - with the config and translations setup - let the unicorn free:
+
+<pre>
+  link :order, Caipirinha
+    # => link_to "Bartender!!", new_caipirinha_path
+
+  link :drink, @sour_caipirinha
+    # => link_to "Drink your caipirinha now", drink_caipirinha_path(@sour_caipirinha)
+
+  link :order, CaptainMorgan
+    # => link_to "New barrel of rum with lime, ohoy!", new_captain_morgan_path
+
+  link :drink, @captain_morgan_no_8
+    # => link_to "Slurp Captain #8 like a pirate", drink_captain_morgan_path(@captain_morgan_no_8)  # See: CaptainMorgan#to_s
+</pre>
+
+h2. TODO
+
+See "TODO":http://github.com/grimen/link2/blob/master/TODO
+
+h2. A note on design decisions
+
+I didn't extend the behavior for the helper @link_to_if@, @link_to_unless@ because I simply think they should not be used in Rails apps; my strong opinion is that they introduce unnecessary complexity in code and make it less readable. I also skipped @link_to_if_current@ because it's not very thorough implementation - even an extra URI slash make it confused, which is funny. Hate it, or LOVE IT.
+
+h2. License
+
+Released under the MIT license.
+Copyright (c) "Jonas Grimfelt":http://github.com/grimen

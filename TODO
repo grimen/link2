@@ -1,0 +1,49 @@
+TODO
+
+* Implement the problematic one: link(:action, [@parent, @resource])
+
+* Write tests for options hashes as well: url_options vs. html_options
+
+* Generate proper DOM ID selectors, e.g. class="new post"
+
+  DOM Selectors
+
+  To make a web-designer's life easier Link2 generates some semantic selector classes based on specified/known link properties for easier DOM-manipulation with CSS and javascript:
+
+  <pre>
+    link :new, Post
+      # => <a class="new post" ...>...<a/>
+
+    link :edit, @post_14
+      # => <a id="edit_post_14_action" class="edit post" ...>...<a/>
+
+    link :back
+      # => <a class="back" ...>...<a/>
+  </pre>
+
+* Fix action mapping procs to handle named scopes. Should work, but do not for some reason. =/
+
+* Fix action mapping procs to receive session, params, etc in a options hash. My mocking/stubbing don't want to work. ='(
+
+* Allow customization of alternatives to Object#to_s for parsing object label, i.e. {{name}} interpolation.
+* Collections detection:
+
+    link(:index)  =>  link(@posts)   =>  link(:index, @posts)   =>  link("Index", @posts)
+
+* Auto-detect current resource instance for member views (non-collection)
+
+    link(:edit)   =>  link(:edit, @post)
+
+  Detect using "self.controller_name.singularize", or use "resource" if InheritedResources is used.
+
+* Add support: #link_to_function + #button_to_function: I18n, more?
+
+    js_link(:hello, "alert('Clicked :hello.');")  =>  link_to_function(I18n.t(:hello, ...), "alert('Clicked :hello.');")
+
+* Add support: #link_to_remote + #button_to_remote: I18n, more? Could probably be cleaned up quite a lot.
+
+    ajax_link(...)
+
+Consider:
+
+* Possible parse TITLE-attribute from the model, say Object#link_title or similar.
