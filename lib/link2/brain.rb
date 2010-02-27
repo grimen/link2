@@ -107,9 +107,7 @@ module Link2
         else
           raise "Invalid number of arguments: #{args.inspect}."
         end
-        #[label, url, *((args << options) << html_options)]
-        #puts url_options.inspect
-        [label, url, *args]
+        [label, url, *((args << url_options) << html_options)]
       rescue => e
         raise ::ArgumentError, e
       end
@@ -142,9 +140,7 @@ module Link2
         custom_name = last_resource.to_s =~ CLASS_INSTANCE_STRING ? last_resource.class.human_name.downcase : last_resource.to_s
         custom_name = last_resource.class.human_name.downcase if custom_name.blank?
 
-        i18n_options.merge!(:name => custom_name)
-
-        label = self.localized_label(:show, last_resource.class, i18n_options)
+        label = self.localized_label(:show, last_resource.class, i18n_options.merge(:name => custom_name))
         url = polymorphic_url(resource, url_for_options)
 
         [label, url]
@@ -171,7 +167,7 @@ module Link2
       # See documentation on +url_for+ for available core options.
       #
       def url_for_args(*args)
-        options = args.extract_options!
+        options = args.extract_options!.dup
         action, resource = args
 
         if resource.nil?
@@ -197,8 +193,8 @@ module Link2
       # for the current template instance.
       #
       def localized_label(action, resource, options = {})
-        options.merge!(:controller => self.controller_name_for_resource(resource))
-        ::Link2::I18n.t(action, resource, options)
+        i18n_options = options.merge(:controller => self.controller_name_for_resource(resource))
+        ::Link2::I18n.t(action, resource, i18n_options)
       end
 
       # Get controller name based for a specified resource.

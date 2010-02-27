@@ -44,6 +44,9 @@ TODO
 
     ajax_link(...)
 
+
 Consider:
+
+* integration tests
 
 * Possible parse TITLE-attribute from the model, say Object#link_title or similar.
