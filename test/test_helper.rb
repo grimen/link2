@@ -9,7 +9,11 @@ require File.join(File.dirname(__FILE__), 'orm', TEST_ORM.to_s)
 
 gem 'test-unit', '1.2.3'
 require 'test/unit'
-require 'leftright'
+
+begin
+  require 'leftright'
+rescue LoadError
+end
 
 # require 'active_support'
 # require 'action_controller'

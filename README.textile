@@ -16,14 +16,6 @@ This is *not* a re-implementation of @link_to@/@button_to@-helpers; rather it wr
 * Full test-coverage for stability.
 * Well-documented code.
 
-h2. Dependencies
-
-The dependencies:
-
-* "rails 2.3.x":http://github.com/rails/rails only. Might as well work with Rails 3 already, but I didn't write that.
-
-For testing: test-unit, and "left-right":http://github.com/jordi/leftright.
-
 h2. Installation
 
 "Drop a *Gem* on 'em":http://open.spotify.com/track/2pqKuHtn8ZKMMMqbJrA2e7:
@@ -32,12 +24,19 @@ h2. Installation
   $ sudo gem install link2
 </pre>
 
+*Dependencies:*
+
+* *"rails 2.3.x":http://github.com/rails/rails* only. Might as well work with Rails 3 already, but I didn't write that.
+
+For testing: test-unit, "mocha":http://github.com/floehopper/mocha, and "webrat":http://github.com/brynary/webrat. Optional: "left-right":http://github.com/jordi/leftright
+
 h2. Setup
 
-Generate initializer (optional):
+Generate *initializer* (optional):
 
 <pre>
   $ ./script/generate link2
+    create    config/initializers/link2.rb
 </pre>
 
 h2. Usage
