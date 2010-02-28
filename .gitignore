@@ -1,3 +1,7 @@
 .DS_Store
-pkg
 .*~
+*.sqlite3
+**/*/log/*
+**/*/tmp/*
+rdoc
+pkg

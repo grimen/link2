@@ -3,7 +3,7 @@
 if defined?(::Link2)
   ::Link2.setup do |config|
     # Configure how - and in what order - link labels should be looked up.
-    # config.i18n_scopes = ['links.{{action}}']
+    # config.i18n_scopes = ['{{model}}.links.{{action}}', 'links.{{action}}']
     #
     # Configure any custom action mappings.
     # config.action_mappings = {

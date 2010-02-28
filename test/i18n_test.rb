@@ -23,7 +23,7 @@ class I18nTest < ActiveSupport::TestCase
   end
 
   test "i18n: should substitute scopes with parsed values for: controller, action, resource, resources" do
-    dummie_scopes = ['{{controller}}.{{resources}}.{{resource}}.{{action}}.label', 'links.{{action}}']
+    dummie_scopes = ['{{controller}}.{{models}}.{{model}}.{{action}}.label', 'links.{{action}}']
     expected_substitution = [:'fraggles.fraggles.fraggle.new.label', :'links.new']
 
     swap ::Link2, :i18n_scopes => dummie_scopes do

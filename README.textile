@@ -1,4 +1,4 @@
-h1. LINK² - ALPHA ;)
+h1. LINK²
 
 _Generation next *link_to*-helper for Rails: Spiced with intelligence, and semantic beauty._
 

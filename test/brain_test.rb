@@ -95,14 +95,15 @@ class BrainTest < ActionView::TestCase
   test "#url_for_args: should generate a url based on action and resource" do
     # FIXME: stub(:session).returns({:return_to => '/'})
 
-    self.expects(:controller_name_for_resource).with(@mookey).returns('fraggles').twice
     self.expects(:controller_name_for_resource).with(::Fraggle).returns('fraggles')
     self.expects(:controller_name_for_resource).with(:fraggle).returns('fraggles')
 
-    assert_equal "/fraggles/new?id=#{@mookey.id}", url_for_args(:new, @mookey)
-    assert_equal '/fraggles/new', url_for_args(:new, ::Fraggle)
     assert_equal '/fraggles/new', url_for_args(:new, :fraggle)
+    assert_equal '/fraggles/new', url_for_args(:new, ::Fraggle)
 
+    self.expects(:controller_name_for_resource).with(@mookey).returns('fraggles').twice
+
+    assert_equal "/fraggles/new?id=#{@mookey.id}", url_for_args(:new, @mookey)
     assert_equal "/fraggles/#{@mookey.id}/edit", url_for_args(:edit, @mookey)
   end
 

@@ -1,0 +1,43 @@
+<h1><%= "Link2 + Rails = ♥" %></h1>
+
+<%= link "WIN" %>
+
+<%= link2 "WIN x 2" %>
+
+<%= button "WIN x 3" %>
+
+<%= button2 "WIN x 4" %>
+
+<%= link "http://rubygems.org" %>
+
+<%= link "Ruby + Gems = ♥", "http://rubygems.org" %>
+
+<%= link :home %>
+
+<%= link :back %>
+
+<%= link @blue_pony %>
+
+<%= link [@blue_pony, @pink_pony] %>
+
+<%= link :new, Pony %>
+
+<%= link :new, :pony %>
+
+<%= link :new, Pony %>
+
+<%= link :new, Pony.new %>
+
+<%= link :edit, @blue_pony %>
+
+<% # TODO: link :edit, [Pony.create, Pony.create] %>
+
+<%= link :shut_up, @blue_pony %>
+
+<%= link "New Pony!", :new, Pony, {:color => 'white'}, :class => 'smaller' %>
+
+<%= link(:new, Pony) { 'Purple Pony!' } %>
+
+<% link :new, Pony do %>
+  Magenta!
+<% end %>

@@ -22,6 +22,12 @@ module Link2
       #   2. links.{{action}}
       #   ...
       #
+      # == Valid value interpolations:
+      #
+      # * +resource+    - resource humanized name (parsed with I18n if possible), e.g. CaptainMorgan / @captain_morgan => "captain morgan"
+      # * +resources+   - pluralized resource humanized name (parsed with I18n if possible), e.g. CaptainMorgan / @captain_morgan => "captain morgans"
+      # * +name+        - current resource name to_s-value, e.g. @captain_morgan.to_s => "Captain Morgan with Cola and lime #4"
+      #
       def translate_with_scoping(action, resource, options = {})
         raise ArgumentError, "At least action must be specified." unless action.present?
         resource_name = self.localized_resource_class_name(resource)
@@ -45,7 +51,7 @@ module Link2
         #
         # == Usage/Examples:
         #
-        #   ::Link2.i18n_scopes = ['{{resources}}.links.{{action}}', '{{controller}}.links.{{action}}', 'links.{{action}}']
+        #   ::Link2.i18n_scopes = ['{{models}}.links.{{action}}', '{{controller}}.links.{{action}}', 'links.{{action}}']
         #
         #   substituted_scopes_for(:new, Post.new)
         #     # => Link2::I18n::ScopeInterpolationError
@@ -53,12 +59,19 @@ module Link2
         #   substituted_scopes_for(:new, Post.new, :controller => 'admin')
         #     # => ['posts.links.new', 'admin.links.{new', 'links.new']
         #
+        # == Valid lookup scope interpolations:
+        #
+        # * +model+       - link model name, e.g. CaptainMorgan / @captain_morgan => "captain_morgan"
+        # * +models+      - pluralized link model name, e.g. CaptainMorgan / @captain_morgan => "captain_morgans"
+        # * +controller+  - current controller name
+        # * +action+      - the link action name
+        #
         def substituted_scopes_for(action, resource, options = {})
-          resource_name = self.localized_resource_class_name(resource) # TODO: Should not be localized. Maybe use "model"/"models" to avoid confusion?
+          model_name = self.localized_resource_class_name(resource) # TODO: Should not be localized. Maybe use "model"/"models" to avoid confusion?
           substitutions = options.merge(
             :action => action.to_s.underscore,
-            :resource => resource_name,
-            :resources => resource_name.pluralize
+            :model => model_name,
+            :models => model_name.pluralize
           )
 
           scopes = ::Link2::i18n_scopes.collect do |i18n_scope|

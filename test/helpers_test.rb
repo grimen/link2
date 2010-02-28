@@ -5,6 +5,9 @@ class HelpersTest < ActionView::TestCase
 
   include Link2::Helpers
 
+  ONE_HASH = {:confirm => 'Really?'}
+  TWO_HASHES = [{:confirm => 'Really?'}, {:class => 'funny'}]
+
   def setup
     ::I18n.locale = :en
 
@@ -22,7 +25,7 @@ class HelpersTest < ActionView::TestCase
 
   test "link(url) should render link_to(url, url)" do
     assert_equal link_to('http://example.com', 'http://example.com'), link('http://example.com')
-    assert_equal link_to('/posts?by=date', '/posts?by=date'), link('/posts?by=date')
+    assert_equal link_to('/posts?by=date', '/posts?by=date'),         link('/posts?by=date')
   end
 
   test "link(label) should render link_to(str_label, '#')" do
@@ -39,69 +42,95 @@ class HelpersTest < ActionView::TestCase
   test "link(:mapping) should render link_to(t(:mapping, ...), url_for_mapping(:mapping, ...)), auto-detecting resource" do
     swap ::Link2, :i18n_scopes => ['link.{{action}}'] do
       assert_equal link_to("Home", '/'), link(:home)
+      assert_equal link_to("Home", '/', ONE_HASH), link(:home, ONE_HASH)
+      assert_equal link_to("Home", '/', *TWO_HASHES), link(:home, *TWO_HASHES)
 
       swap ::Link2, :action_mappings => {:secret => '/secret'} do
-        assert_equal link_to("Secret", '/secret'), link(:secret)
+        assert_equal link_to("Secret", '/secret'),              link(:secret)
+        assert_equal link_to("Secret", '/secret', ONE_HASH),    link(:secret, ONE_HASH)
+        assert_equal link_to("Secret", '/secret', *TWO_HASHES), link(:secret, *TWO_HASHES)
       end
     end
   end
 
   test "link(@resource) should render link_to(t(:show, ...), @object)" do
     swap ::Link2, :i18n_scopes => ['link.{{action}}'] do
-      assert_equal link_to("Show", "/fraggles/#{@mookey.id}"), link(@mookey)
+      assert_equal link_to("Show", "/fraggles/#{@mookey.id}"),              link(@mookey)
+      assert_equal link_to("Show", "/fraggles/#{@mookey.id}", ONE_HASH),    link(@mookey, ONE_HASH)
+      assert_equal link_to("Show", "/fraggles/#{@mookey.id}", *TWO_HASHES), link(@mookey, *TWO_HASHES)
       # assert_equal link_to("Show", "?"), link(::Fraggle) # test this stupid case?
     end
   end
 
   test "link([@parent, @resource]) should render link_to(t(:show, ...), polymorphic_path([@parent, @resource]))" do
     swap ::Link2, :i18n_scopes => ['link.{{action}}'] do
-      assert_equal link_to("Show", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}"), link([@mookey, @mookeys_cool_aid])
+      assert_equal link_to("Show", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}"),              link([@mookey, @mookeys_cool_aid])
+      assert_equal link_to("Show", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}", ONE_HASH),    link([@mookey, @mookeys_cool_aid], ONE_HASH)
+      assert_equal link_to("Show", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}", *TWO_HASHES), link([@mookey, @mookeys_cool_aid], *TWO_HASHES)
     end
   end
 
-  # FINALIZE: link(x, y, {}, {})
+  # link(x, y, {}, {})
 
   test "link(label, url) should render link_to(label, url)" do
-    assert_equal link_to('http://example.com', 'http://example.com'), link('http://example.com', 'http://example.com')
-    assert_equal link_to('New', '/posts/new'), link('New', '/posts/new')
+    assert_equal link_to('New', '/posts/new'),              link('New', '/posts/new')
+    assert_equal link_to('New', '/posts/new', ONE_HASH),    link('New', '/posts/new', ONE_HASH)
+    assert_equal link_to('New', '/posts/new', *TWO_HASHES), link('New', '/posts/new', *TWO_HASHES)
+
+    assert_equal link_to('http://example.com', 'http://example.com'),               link('http://example.com', 'http://example.com')
+    assert_equal link_to('http://example.com', 'http://example.com', ONE_HASH),     link('http://example.com', 'http://example.com', ONE_HASH)
+    assert_equal link_to('http://example.com', 'http://example.com', *TWO_HASHES),  link('http://example.com', 'http://example.com', *TWO_HASHES)
   end
 
   test "link(:action) should render link_to(label, url_for(:action => :action, ...)), auto-detecting resource" do
     swap ::Link2, :i18n_scopes => ['link.{{action}}'] do
       # assert_equal link_to("New Fraggle!!"), link("New Fraggle!!", :new)
       assert_raise(::Link2::NotImplementedYetError) { link("New Fraggle!!", :new) }
+      assert_raise(::Link2::NotImplementedYetError) { link("New Fraggle!!", :new, ONE_HASH) }
+      assert_raise(::Link2::NotImplementedYetError) { link("New Fraggle!!", :new, *TWO_HASHES) }
     end
   end
 
   test "link(label, action) should render link_to(label, url_for_mapping(:mapping, ...)), auto-detecting resource" do
     swap ::Link2, :i18n_scopes => ['link.{{action}}'] do
-      assert_equal link_to("Home!!", '/'), link("Home!!", :home)
+      assert_equal link_to("Home!!", '/'),              link("Home!!", :home)
+      assert_equal link_to("Home!!", '/', ONE_HASH),    link("Home!!", :home, ONE_HASH)
+      assert_equal link_to("Home!!", '/', *TWO_HASHES), link("Home!!", :home, *TWO_HASHES)
 
       swap ::Link2, :action_mappings => {:secret => '/secret'} do
-        assert_equal link_to("Damn you!!", '/secret'), link("Damn you!!", :secret)
+        assert_equal link_to("Damn you!!", '/secret'),              link("Damn you!!", :secret)
+        assert_equal link_to("Damn you!!", '/secret', ONE_HASH),    link("Damn you!!", :secret, ONE_HASH)
+        assert_equal link_to("Damn you!!", '/secret', *TWO_HASHES), link("Damn you!!", :secret, *TWO_HASHES)
       end
     end
   end
 
   test "link(:action, Resource) should render link_to(t(:action, ...), url_for(:action => :action, ...))" do
     swap ::Link2, :i18n_scopes => ['link.{{action}}'] do
-      assert_equal link_to("New", "/fraggles/new"), link(:new, ::Fraggle)
+      assert_equal link_to("New", "/fraggles/new"),               link(:new, ::Fraggle)
+      assert_equal link_to("New", "/fraggles/new", ONE_HASH),     link(:new, ::Fraggle, ONE_HASH)
+      assert_equal link_to("New", "/fraggles/new", *TWO_HASHES),  link(:new, ::Fraggle, *TWO_HASHES)
     end
   end
 
-  test "link(:action, @resource) should render link_to(t(:action, ...), url_for(:action => :action, ...))" do
+  test "link(:action, @resource) should render link_to(t(:action, ...), url_for(:action => :action, ...)), non-RESTful vs. RESTful routes" do
     swap ::Link2, :i18n_scopes => ['link.{{action}}'] do
-      # Non-RESTful-route, basic case.
-      assert_equal link_to("New", "/fraggles/new?id=#{@mookey.id}"), link(:new, @mookey)
-      # REST-case.
-      assert_equal link_to("Edit", "/fraggles/#{@mookey.id}/edit"), link(:edit, @mookey)
+      assert_equal link_to("New", "/fraggles/new?id=#{@mookey.id}"),              link(:new, @mookey)
+      assert_equal link_to("New", "/fraggles/new?id=#{@mookey.id}", ONE_HASH),    link(:new, @mookey, ONE_HASH)
+      assert_equal link_to("New", "/fraggles/new?id=#{@mookey.id}", *TWO_HASHES), link(:new, @mookey, *TWO_HASHES)
+
+      assert_equal link_to("Edit", "/fraggles/#{@mookey.id}/edit"),               link(:edit, @mookey)
+      assert_equal link_to("Edit", "/fraggles/#{@mookey.id}/edit", ONE_HASH),     link(:edit, @mookey, ONE_HASH)
+      assert_equal link_to("Edit", "/fraggles/#{@mookey.id}/edit", *TWO_HASHES),  link(:edit, @mookey, *TWO_HASHES)
     end
   end
 
   test "link(:action, [@parent, @resource]) should render link_to(t(:action, ...), polymorphic_path([@parent, @resource]), :action => :action)" do
     swap ::Link2, :i18n_scopes => ['link.{{action}}'] do
       # assert_equal link_to("Edit", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}/edit"), link(:edit, [@mookey, @mookeys_cool_aid])
-      assert_raise(::Link2::NotImplementedYetError) {  link(:edit, [@mookey, @mookeys_cool_aid]) }
+      assert_raise(::Link2::NotImplementedYetError) { link(:edit, [@mookey, @mookeys_cool_aid]) }
+      assert_raise(::Link2::NotImplementedYetError) { link(:edit, [@mookey, @mookeys_cool_aid], ONE_HASH) }
+      assert_raise(::Link2::NotImplementedYetError) { link(:edit, [@mookey, @mookeys_cool_aid], *TWO_HASHES) }
     end
   end
 
@@ -109,7 +138,12 @@ class HelpersTest < ActionView::TestCase
 
   test "link(label, action, resource)" do
     assert_equal link_to("Newish", "/fraggles/new"), link("Newish", :new, ::Fraggle)
+    assert_equal link_to("Newish", "/fraggles/new", ONE_HASH), link("Newish", :new, ::Fraggle, ONE_HASH)
+    assert_equal link_to("Newish", "/fraggles/new", *TWO_HASHES), link("Newish", :new, ::Fraggle, *TWO_HASHES)
+
     assert_equal link_to("Editish", "/fraggles/#{@mookey.id}/edit"), link("Editish", :edit, @mookey)
+    assert_equal link_to("Editish", "/fraggles/#{@mookey.id}/edit", ONE_HASH), link("Editish", :edit, @mookey, ONE_HASH)
+    assert_equal link_to("Editish", "/fraggles/#{@mookey.id}/edit", *TWO_HASHES), link("Editish", :edit, @mookey, *TWO_HASHES)
   end
 
   test "js_link should not be implemented (yet)" do

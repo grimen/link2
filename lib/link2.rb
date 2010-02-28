@@ -31,7 +31,7 @@ module Link2
 
   # Default I18n lookup scopes if none are set.
   DEFAULT_I18N_SCOPES = [
-    '{{resource}}.links.{{action}}',
+    '{{model}}.links.{{action}}',
     'links.{{action}}'
   ]
 

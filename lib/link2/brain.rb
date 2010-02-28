@@ -6,10 +6,9 @@ module Link2
     URL_PATH_REGEX = /\//
     CLASS_INSTANCE_STRING = /\#\<.*\:0x.*\>/
 
-    LINK2_OPTION_KEYS = [:scope, :strong].freeze
     LINK_TO_OPTION_KEYS = [:method, :confirm, :popup, :html_options].freeze
     BUTTON_TO_OPTION_KEYS = [:method, :confirm, :disabled].freeze
-    IGNORED_OPTION_KEYS = (LINK2_OPTION_KEYS + LINK_TO_OPTION_KEYS + BUTTON_TO_OPTION_KEYS).uniq
+    IGNORED_OPTION_KEYS = (LINK_TO_OPTION_KEYS + BUTTON_TO_OPTION_KEYS).uniq
 
     POLYMORPHIC_OPTION_KEYS = [:action, :routing_type]
 
@@ -23,9 +22,12 @@ module Link2
       # The comments give guidelines on what assumptions is being made in each case.
       #
       def link_to_args(*args)
-        html_options = args.extract_options!
-        url_options = args.extract_options!
         args.unshift(capture(&block)) if block_given?
+
+        html_options = args.pop if args.last.is_a?(Hash)
+        url_options = args.pop if args.last.is_a?(Hash)
+
+        #puts [url_options, html_options].compact.inspect
 
         case args.size
         when 0
@@ -71,7 +73,9 @@ module Link2
             end
           elsif args.first.is_a?(Symbol)
             # TODO: Implement this:
-            raise ::Link2::NotImplementedYetError, "case link(:action, [...]) not yet supported. Need to refactor some stuff." if args.second.is_a?(Array)
+            if args.second.is_a?(Array)
+              raise ::Link2::NotImplementedYetError, "case link(:action, [...]) not yet supported. Need to refactor some stuff."
+            end
             # TODO: Cleanup.
             if self.resource_identifier_class?(args.second)
               # link :new, Post  => link_to I18n.t(:new, ...), new_post_path
@@ -107,7 +111,9 @@ module Link2
         else
           raise "Invalid number of arguments: #{args.inspect}."
         end
-        [label, url, *((args << url_options) << html_options)]
+        args << url_options if url_options
+        args << html_options if html_options
+        [label, url, *args]
       rescue => e
         raise ::ArgumentError, e
       end
@@ -131,10 +137,11 @@ module Link2
       # See documentation on +polymorphic_url+ for available core options.
       #
       def label_and_url_for_resource(resource, options = {})
+        options ||= {}
         resource.compact! if resource.is_a?(Array)
         last_resource = [resource].flatten.last
-        url_for_options = options.slice!(*POLYMORPHIC_OPTION_KEYS).reverse_merge(:routing_type => :path)
-        i18n_options = options
+        url_for_options = options.slice(*POLYMORPHIC_OPTION_KEYS).reverse_merge(:routing_type => :path)
+        i18n_options = options.except(url_for_options.keys)
 
         # Skip any ugly default to_s-value.
         custom_name = last_resource.to_s =~ CLASS_INSTANCE_STRING ? last_resource.class.human_name.downcase : last_resource.to_s
@@ -185,7 +192,7 @@ module Link2
           options[:action] = action
           options[:id] = resource.id if !resource.is_a?(Class) && self.record_class?(resource)
 
-          url_for(options.except(IGNORED_OPTION_KEYS))
+          url_for(options.except(*IGNORED_OPTION_KEYS))
         end
       end
 
@@ -193,6 +200,7 @@ module Link2
       # for the current template instance.
       #
       def localized_label(action, resource, options = {})
+        options ||= {}
         i18n_options = options.merge(:controller => self.controller_name_for_resource(resource))
         ::Link2::I18n.t(action, resource, i18n_options)
       end
