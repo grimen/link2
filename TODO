@@ -1,20 +1,16 @@
 TODO
 
-1) [BUG:] I18n lookup scope interpolations should not be same as I18n.t interpolations.
-
-2) Auto-detect current resource instance for member views (non-collection)
+1) Auto-detect current resource instance for member views (non-collection)
 
     link(:edit)   =>  link(:edit, @post)
 
   Detect using "self.controller_name.singularize", or use "resource" if InheritedResources is used.
 
-* [ISSUE:] Implement the problematic one: link(:action, [@parent, @resource])
+2) [ISSUE:] Implement the problematic one: link(:action, [@parent, @resource])
 
 * Collections detection:
 
     link(:index)  =>  link(@posts)   =>  link(:index, @posts)   =>  link("Index", @posts)
-
-* Allow customization of alternatives to Object#to_s for parsing object label, i.e. {{name}} interpolation.
 
 * Fix action mapping procs to handle named scopes. Should work, but do not for some reason. =/
 
@@ -30,6 +26,6 @@ TODO
 
 * ORM-tests: DataMapper, MongoMapper
 
-Consider:
+NOT SURE:
 
-* Possible parse TITLE-attribute from the model, say Object#link_title or similar.
+* Make Link2 parse label and title-attribute for the link based on configuration: Link2.label_method = :to_s, Link2.attr_methods = {:title => :description}

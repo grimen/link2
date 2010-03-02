@@ -26,12 +26,14 @@ class I18nTest < ActiveSupport::TestCase
   test "i18n: should substitute scopes with parsed values for: controller, action, resource, resources" do
     dummie_scopes = ['{{controller}}.{{models}}.{{model}}.{{action}}.label', 'links.{{action}}']
     expected_substitution = [:'fraggles.fraggles.fraggle.new.label', :'links.new']
+    expected_substitution_underscored = [:'fraggles.cool_aids.cool_aid.new.label', :'links.new']
 
     swap ::Link2, :i18n_scopes => dummie_scopes do
       assert_raise(::Link2::I18n::ScopeInterpolationError) { ::Link2::I18n.send(:substituted_scopes_for, :new, ::Fraggle) }
 
       assert_nothing_raised(::KeyError) { ::Link2::I18n.send(:substituted_scopes_for, :new, ::Fraggle, :controller => 'fraggles') }
       assert_equal expected_substitution, ::Link2::I18n.send(:substituted_scopes_for, :new, ::Fraggle, :controller => 'fraggles')
+      assert_equal expected_substitution_underscored, ::Link2::I18n.send(:substituted_scopes_for, :new, ::CoolAid, :controller => 'fraggles')
     end
   end
 

@@ -61,13 +61,14 @@ module Link2
         #
         # == Valid lookup scope interpolations:
         #
+        # * +controller+  - current controller name (note: must be passed from view template)
+        # * +action+      - the link action name
         # * +model+       - link model name, e.g. CaptainMorgan / @captain_morgan => "captain_morgan"
         # * +models+      - pluralized link model name, e.g. CaptainMorgan / @captain_morgan => "captain_morgans"
-        # * +controller+  - current controller name
-        # * +action+      - the link action name
         #
         def substituted_scopes_for(action, resource, options = {})
-          model_name = self.localized_resource_class_name(resource) # TODO: Should not be localized. Maybe use "model"/"models" to avoid confusion?
+          resource_class = ::Link2::Support.find_resource_class(resource)
+          model_name = resource_class.name.underscore rescue ''
           substitutions = options.merge(
             :action => action.to_s.underscore,
             :model => model_name,
