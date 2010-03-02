@@ -16,6 +16,10 @@ class Link2Test < ActiveSupport::TestCase
     swap Link2, :action_mappings => {:home => '/'} do
       assert_equal ({:home => '/'}), Link2.action_mappings
     end
+
+    swap Link2, :dom_selectors => true do
+      assert_equal true, Link2.dom_selectors
+    end
   end
 
   test "#url_for_mapping: should only map mapped action keys" do

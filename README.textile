@@ -6,15 +6,20 @@ h2. Introduction
 
 A better link helper for Rails designed with the principle of making smart assumptions based on what's known to avoid repeated and unnecessary code declarations; and at the same time making the code more semantic/readable/beautiful (my subjective opinion). On top of that - for even more maintainable views - scoped I18n translations without lean defaults for fast prototyping. WIN-WIN-WIN.
 
-This is *not* a re-implementation of @link_to@/@button_to@-helpers; rather it wraps these but parses the specified method arguments and extracts as much known information as possible to fill in the missing pieces. The core helpers are not altered at all: You can call them old-school like there was no tomorrow (after using Link2 for a while you'll spoiled and the core helpers will feel so yesterday, really).
+*Helpers:*
+
+* *@link_to@* enhanced by @link@
+* *@button_to@* enhanced by @button@
+
+This is *not* a re-implementation of these helpers; rather it wraps these but parses the specified method arguments and extracts as much known information as possible to fill in the missing pieces. The core helpers are not altered at all: You can call them old-school like there was no tomorrow (after using Link2 for a while you'll spoiled and the core helpers will feel so yesterday, really).
 
 *Goals/Features:*
 
-* Rapid prototyping-friendly link helpers - with no trade-offs, really.
-* Based on specified arguments: Use what's know to make smart assumptions => DRYer - and more maintainable view code.
-* Use power of I18n: Lookup scoped translations based on action, model, etc., for more flexible translations - with lean defaults. Enhanced with some nifty interpolation features as well. Code first, translate later.
-* Full test-coverage for stability.
-* Well-documented code.
+* *Rapid & flexible* - prototyping-friendly link helpers - with no trade-offs, really.
+* *DRY* - based on specified arguments: Use what's know to make smart assumptions => DRYer - and more maintainable view code.
+* *I18n deluxe* - Lookup scoped translations based on action, model, etc., for more flexible translations - with lean defaults. Enhanced with some nifty interpolation features as well. Code first, translate later.
+* *Stable* - Full test-coverage for stability. Unit + Rails integration tests, check: @44 tests: all passed@
+* *Maintainable* - Well-documented code.
 
 h2. Installation
 
@@ -28,7 +33,7 @@ h2. Installation
 
 * *"rails 2.3.x":http://github.com/rails/rails* only. Might as well work with Rails 3 already, but I didn't write that.
 
-For testing: test-unit, "mocha":http://github.com/floehopper/mocha, and "webrat":http://github.com/brynary/webrat. Optional: "left-right":http://github.com/jordi/leftright
+For testing: test-unit, "mocha":http://github.com/floehopper/mocha, and "webrat":http://github.com/brynary/webrat. Optional: "leftright":http://github.com/jordi/leftright
 
 h2. Setup
 
@@ -108,7 +113,7 @@ h2. Options hashes: URL Options + HTML Options
 
 Link2 link helpers accept options in the same way as the core helpers @link_to@/@button_to@: first @options@ (a.k.a. @url_options@) and then @html_options@. See the "Rails core UrlHelpers documentation":http://railsapi.com/doc/rails-v2.3.5/classes/ActionView/Helpers/UrlHelper.html#M002452 for details on this. Link2 helpers just pass any non-Link2-related options to the Rails core helpers. In other words no need to learn a new API; just pass the needed options like in the past.
 
-h2. Expected arguments
+h2. Expected arguments (...but the examples should be enough)
 
 A summary of the expected argument flavors if the examples for the curious minds:
 
@@ -196,6 +201,35 @@ Now - with the config and translations setup - let the unicorn free:
 
   link :drink, @captain_morgan_no_8
     # => link_to "Slurp Captain #8 like a pirate", drink_captain_morgan_path(@captain_morgan_no_8)  # See: CaptainMorgan#to_s
+</pre>
+
+h2. DOM Selectors
+
+To make a web-designer's life easier Link2 generates some semantic selector classes based on specified/known link properties for easier DOM-manipulation with CSS and javascript.
+
+*Examples:*
+
+<pre>
+  link :new, Post
+    # => <a class="new post" ...>...<a/>
+
+  link :edit, @post_14
+    # => <a class="edit post id_14" ...>...<a/>
+
+  link :back
+    # => <a class="back" ...>...<a/>
+
+  ...
+</pre>
+
+*Configuration:*
+
+This behavior is enabled by default but can be disabled just in case; preferably in the initializer:
+
+<pre>
+  Link2.setup do |config|
+    config.dom_selectors = false
+  end
 </pre>
 
 h2. TODO

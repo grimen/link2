@@ -10,5 +10,8 @@ if defined?(::Link2)
     #   :home => lambda { root_path },
     #   :back => lambda { |url| url || session[:return_to] || :back }
     # }
+    #
+    # Enable/Disable Link2 DOM selectors generation.
+    # config.dom_selectors = true
   end
 end

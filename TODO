@@ -1,21 +1,6 @@
 TODO
 
-1) Generate proper DOM ID selectors, e.g. class="new post"
-
-  DOM Selectors
-
-  To make a web-designer's life easier Link2 generates some semantic selector classes based on specified/known link properties for easier DOM-manipulation with CSS and javascript:
-
-  <pre>
-    link :new, Post
-      # => <a class="new post" ...>...<a/>
-
-    link :edit, @post_14
-      # => <a id="edit_post_14_action" class="edit post" ...>...<a/>
-
-    link :back
-      # => <a class="back" ...>...<a/>
-  </pre>
+1) [BUG:] I18n lookup scope interpolations should not be same as I18n.t interpolations.
 
 2) Auto-detect current resource instance for member views (non-collection)
 

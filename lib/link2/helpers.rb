@@ -11,7 +11,7 @@ module Link2
 
     # Enhanced +link_to+ helper.
     #
-    # TODO: Documentation for this helper.
+    # TODO: Documentation for this helper. For now the README should be sufficient.
     #
     def link(*args, &block)
       args = self.link_to_args(*args)

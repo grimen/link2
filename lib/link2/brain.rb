@@ -27,57 +27,56 @@ module Link2
         html_options = args.pop if args.last.is_a?(Hash)
         url_options = args.pop if args.last.is_a?(Hash)
 
-        #puts [url_options, html_options].compact.inspect
-
         case args.size
-        when 0
-          raise "No arguments specified. A least specify action or url."
-        when 1
-          if args.first.is_a?(String)
-            if args.first =~ URL_PATH_REGEX
-              # link 'http://example.com'  => link_to 'http://example.com', 'http://example.com'
-              label = url = args.shift
-            else
-              # link "Hello"  => link_to 'Hello', '#'
-              url = ::Link2::DEFAULT_LINK
-              label = args.shift
-            end
-          elsif args.first.is_a?(Symbol)
-            # link :new  => link_to I18n.t(:new, ...), new_{auto_detected_resource}_path
-            # link :back  => link_to I18n.t(:back, ...), (session[:return_to] || :back)
-            action = args.shift
-            label = self.localized_label(action, url_options)
-            resource = nil # TODO: auto-detect resource.
-            url = self.url_for_args(action, resource, url_options)
-          elsif args.first.is_a?(Object)
-            # link @user  => link_to I18n.t(:show, ...), user_path(@user)
-            # link [:admin, @user]  => link_to I18n.t(:show, ...), admin_user_path(@user)
-            resource = args.shift
-            label, url = self.label_and_url_for_resource(resource, url_options)
-          else
-            raise "Invalid 1st argument: #{args.inspect}"
-          end
-        when 2
-          if args.first.is_a?(String)
-            if args.second.is_a?(String)
-              # link "Hello", hello_path  => link_to "Hello", hello_path
-              label, url = args.slice!(0..1)
-            elsif self.resource_identifier_class?(args.second)
-              # link "New", :new  => link_to "New", new_{auto_detected_resource}_path
-              # link "<<", :back  => link_to "<<", (session[:return_to] || :back)
-              label, action = args.slice!(0..1)
+          when 0
+            raise "No arguments specified. A least specify action or url."
+          when 1
+            if args.first.is_a?(String)
+              if args.first =~ URL_PATH_REGEX
+                # link 'http://example.com'  => link_to 'http://example.com', 'http://example.com'
+                label = url = args.shift
+              else
+                # link "Hello"  => link_to 'Hello', '#'
+                url = ::Link2::DEFAULT_LINK
+                label = args.shift
+              end
+            elsif args.first.is_a?(Symbol)
+              # link :new  => link_to I18n.t(:new, ...), new_{auto_detected_resource}_path
+              # link :back  => link_to I18n.t(:back, ...), (session[:return_to] || :back)
+              action = args.shift
               resource = nil # TODO: auto-detect resource.
+              label = self.localized_label(action, resource, url_options)
               url = self.url_for_args(action, resource, url_options)
+            elsif args.first.is_a?(Object)
+              # link @user  => link_to I18n.t(:show, ...), user_path(@user)
+              # link [:admin, @user]  => link_to I18n.t(:show, ...), admin_user_path(@user)
+              resource = args.shift
+              label, url = self.label_and_url_for_resource(resource, url_options)
             else
-              raise "Invalid 2nd argument: #{args.inspect}"
+              raise "Invalid 1st argument: #{args.inspect}"
             end
-          elsif args.first.is_a?(Symbol)
-            # TODO: Implement this:
-            if args.second.is_a?(Array)
-              raise ::Link2::NotImplementedYetError, "case link(:action, [...]) not yet supported. Need to refactor some stuff."
+          when 2
+            if args.first.is_a?(String)
+              if args.second.is_a?(String)
+                # link "Hello", hello_path  => link_to "Hello", hello_path
+                label, url = args.slice!(0..1)
+              elsif ::Link2::Support.resource_identifier_class?(args.second)
+                # link "New", :new  => link_to "New", new_{auto_detected_resource}_path
+                # link "<<", :back  => link_to "<<", (session[:return_to] || :back)
+                label, action = args.slice!(0..1)
+                resource = nil # TODO: auto-detect resource.
+                url = self.url_for_args(action, resource, url_options)
+              else
+                raise "Invalid 2nd argument: #{args.inspect}"
+              end
+            elsif args.first.is_a?(Symbol)
+              # TODO: Implement support for aray of nested resources.
+              if args.second.is_a?(Array)
+                raise ::Link2::NotImplementedYetError, "case link(:action, [...]) not yet supported. Need to refactor some stuff."
             end
+
             # TODO: Cleanup.
-            if self.resource_identifier_class?(args.second)
+            if ::Link2::Support.resource_identifier_class?(args.second)
               # link :new, Post  => link_to I18n.t(:new, ...), new_post_path
               # link :edit, @post  => link_to I18n.t(:edit, ...), edit_post_path(@post)
               # link :show, [:admin, @user]  => link_to I18n.t(:show, ...), admin_user_path(@user)
@@ -87,14 +86,19 @@ module Link2
               url = self.url_for_args(action, resource, url_options)
             else
               raise "Invalid 2nd argument: #{args.inspect}"
-            end
-          else
-            raise "Invalid 1st argument: #{args.inspect}"
-          end
-        when 3
-          if args.first.is_a?(String)
-            if args.second.is_a?(Symbol)
-              if self.resource_identifier_class?(args.third)
+                    end
+              else
+                raise "Invalid 1st argument: #{args.inspect}"
+              end
+              when 3
+              if args.first.is_a?(String)
+                if args.second.is_a?(Symbol)
+                  # TODO: Implement support for aray of nested resources.
+                  if args.third.is_a?(Array)
+                    raise ::Link2::NotImplementedYetError, 'case link("Label", :action, [...]) not yet supported. Need to refactor some stuff.'
+              end
+
+              if ::Link2::Support.resource_identifier_class?(args.third)
                 # link "New", :new, Post  => link_to "New", new_post_path
                 # link "Edit", :edit, @post  => link_to "Edit", edit_post_path(@post)
                 label, action, resource = args.slice!(0..2)
@@ -111,8 +115,14 @@ module Link2
         else
           raise "Invalid number of arguments: #{args.inspect}."
         end
+
+        if ::Link2.dom_selectors == true
+          html_options = self.merge_link2_dom_selectors(action, resource, html_options)
+        end
+
         args << url_options if url_options
         args << html_options if html_options
+
         [label, url, *args]
       rescue => e
         raise ::ArgumentError, e
@@ -138,16 +148,11 @@ module Link2
       #
       def label_and_url_for_resource(resource, options = {})
         options ||= {}
-        resource.compact! if resource.is_a?(Array)
-        last_resource = [resource].flatten.last
         url_for_options = options.slice(*POLYMORPHIC_OPTION_KEYS).reverse_merge(:routing_type => :path)
         i18n_options = options.except(url_for_options.keys)
+        last_resource = ::Link2::Support.extract_resource(resource)
 
-        # Skip any ugly default to_s-value.
-        custom_name = last_resource.to_s =~ CLASS_INSTANCE_STRING ? last_resource.class.human_name.downcase : last_resource.to_s
-        custom_name = last_resource.class.human_name.downcase if custom_name.blank?
-
-        label = self.localized_label(:show, last_resource.class, i18n_options.merge(:name => custom_name))
+        label = self.localized_label(:show, last_resource, i18n_options)
         url = polymorphic_url(resource, url_for_options)
 
         [label, url]
@@ -190,7 +195,7 @@ module Link2
         else
           options[:controller] ||= self.controller_name_for_resource(resource)
           options[:action] = action
-          options[:id] = resource.id if !resource.is_a?(Class) && self.record_class?(resource)
+          options[:id] = resource.id if !resource.is_a?(Class) && ::Link2::Support.record_class?(resource)
 
           url_for(options.except(*IGNORED_OPTION_KEYS))
         end
@@ -201,11 +206,11 @@ module Link2
       #
       def localized_label(action, resource, options = {})
         options ||= {}
-        i18n_options = options.merge(:controller => self.controller_name_for_resource(resource))
+        i18n_options = options.merge(:controller => self.controller_name_for_resource(resource), :name => self.human_name_for_resource(resource))
         ::Link2::I18n.t(action, resource, i18n_options)
       end
 
-      # Get controller name based for a specified resource.
+      # Parse controller name based for a specified resource.
       #
       # == Example/Usage:
       #
@@ -225,32 +230,81 @@ module Link2
       #
       def controller_name_for_resource(resource = nil)
         resource_class = ::Link2::Support.find_resource_class(resource)
-        if self.record_class?(resource_class)
+        if ::Link2::Support.record_class?(resource_class)
           resource_class.to_s.tableize # rescue nil
         end || self.controller.controller_name
       end
 
-      # Check if the specified object is a valid resource identifier class. Used
-      # for detecting current resource based on controller, action, etc.
+      # Parse human resource name for a specified resource.
       #
-      def resource_identifier_class?(object)
-        object.is_a?(NilClass) || object.is_a?(Symbol) || self.record_class?(object)
+      # == Example/Usage:
+      #
+      #   human_name_for_resource(@post)
+      #     # => "post"
+      #
+      #   human_name_for_resource(@post)
+      #     # => "post"
+      #
+      #   class Post < ActiveRecord::Base
+      #     def to_s
+      #       self.title
+      #     end
+      #   end
+      #
+      #   human_name_for_resource(Post.create(:title => "Hello"))
+      #     # => "Hello"
+      #
+      def human_name_for_resource(resource)
+        return nil unless resource_class = ::Link2::Support.find_resource_class(resource)
+        raise ArgumentError unless ::Link2::Support.record_class?(resource_class)
+
+        if ::Link2::Support.record_object?(resource)
+          # Skip any ugly default to_s-value:
+          custom_name = resource.to_s =~ CLASS_INSTANCE_STRING ? resource_class.human_name.downcase : resource.to_s
+        end
+        custom_name = resource_class.human_name.downcase if custom_name.blank?
+        custom_name
       end
 
-      # Check if a specified objec is a record class type.
+      # Attach Link2 semantic DOM selector attributes (attributes "id" and "class") based on
+      # action and resource - if any can be parsed.
       #
       # == Usage/Examples:
       #
-      #   record_class?(ActiveRecord::Base)
-      #     # => true
+      #   attach_link2_dom_selectors(:new, Post, {})
+      #     # => {:class => "new post"}
       #
-      #   record_class?(String)
-      #     # => false
+      #   attach_link2_dom_selectors(:new, Post, {:id => "one", :class => "two"})
+      #     # => {:id => "one", :class => "new post two"}
       #
-      def record_class?(object_or_class)
-        return false if object_or_class == NilClass || object_or_class.is_a?(NilClass)
-        object_or_class = object_or_class.new if object_or_class.is_a?(Class)
-        object_or_class.respond_to?(:new_record?)
+      #   attach_link2_dom_selectors(:new, @post_14, {})
+      #     # => {:class => "edit post id_14"}
+      #
+      #   attach_link2_dom_selectors(:new, @post_14, {:id => "one", :class => "two"})
+      #     # => {:id => "one", :class => "edit post two"}
+      #
+      def merge_link2_dom_selectors(action, resource = nil, html_options = {})
+        html_options ||= {}
+        link2_attributes = self.link2_attrbutes_for(action, resource)
+
+        html_options[:class] = [link2_attributes[:class],html_options[:class]].compact.join(' ')
+        html_options[:class] = nil if html_options[:class].blank?
+
+        html_options
+      end
+
+      # Generate semantic Link2 HTML attributes.
+      #
+      # See: +merge_link2_dom_selectors+.
+      #
+      def link2_attrbutes_for(action, resource = nil)
+        resource_class = ::Link2::Support.find_resource_class(resource)
+
+        resource_name_dom_class = resource_class.name.underscore if resource_class.present?
+        resource_id_dom_class = "id_#{resource.id}" if ::Link2::Support.record_object?(resource)
+        dom_class = [action.to_s, resource_name_dom_class, resource_id_dom_class].compact.join(' ')
+
+        {:class => dom_class}
       end
 
   end

@@ -56,19 +56,18 @@ module Link2
     :back => lambda { |url| url || :back }
   }
 
-  mattr_accessor :i18n_scope
-  @@i18n_scope = DEFAULT_I18N_SCOPE
-
   # I18n lookup scopes in ascending order of priority.
-  # Used for scoped I18n translations based on model, action, etc.,
-  # for flexability.
+  # Used for scoped I18n translations based on model, action, etc., for flexability.
   mattr_accessor :i18n_scopes
   @@i18n_scopes = DEFAULT_I18N_SCOPES
 
-  # Action mappings - a.k.a. "link value shortcuts" - that should
-  # be recognized.
+  # Action mappings - a.k.a. "link value shortcuts" - that should be recognized.
   mattr_accessor :action_mappings
   @@action_mappings = DEFAULT_ACTION_MAPPINGS
+
+  # DOM selectors for easier manipulation of Link2 linksusing CSS/JavaScript.
+  mattr_accessor :dom_selectors
+  @dom_selectors = true
 
   class << self
 

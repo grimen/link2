@@ -5,6 +5,7 @@ class I18nTest < ActiveSupport::TestCase
 
   def setup
     ::I18n.locale = :en
+    ::Link2.i18n_scopes = ['links.{{action}}']
   end
 
   test "i18n: should load default translations automatically" do
@@ -35,11 +36,13 @@ class I18nTest < ActiveSupport::TestCase
   end
 
   test "i18n: should be able to translate action without any options" do
-    i18n_options = {:scope => 'links', :resource => 'fraggle', :resources => 'fraggles'}
+    swap ::Link2, :i18n_scopes => ['links.{{action}}'] do
+      i18n_options = {:scope => 'links', :resource => 'fraggle', :resources => 'fraggles'}
 
-    assert_equal ::I18n.t(:new, i18n_options), ::Link2::I18n.t(:new, ::Fraggle)
-    assert_equal ::I18n.t(:new, i18n_options), ::Link2::I18n.t(:new, ::Fraggle.new)
-    assert_equal ::I18n.t(:new, i18n_options), ::Link2::I18n.t(:new, :fraggle)
+      assert_equal ::I18n.t(:new, i18n_options), ::Link2::I18n.t(:new, ::Fraggle)
+      assert_equal ::I18n.t(:new, i18n_options), ::Link2::I18n.t(:new, ::Fraggle.new)
+      assert_equal ::I18n.t(:new, i18n_options), ::Link2::I18n.t(:new, :fraggle)
+    end
   end
 
   test "i18n: should be able to translate action with respect to any valid extra interpolation arguments" do

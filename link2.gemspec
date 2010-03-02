@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{link2}
-  s.version = "0.1.0"
+  s.version = "0.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jonas Grimfelt"]
-  s.date = %q{2010-02-25}
+  s.date = %q{2010-02-28}
   s.description = %q{Generation next link_to-helper for Rails: Spiced with intelligence, and semantic beauty.}
   s.email = %q{grimen@gmail.com}
   s.extra_rdoc_files = [
@@ -41,11 +41,26 @@ Gem::Specification.new do |s|
     "test/brain_test.rb",
      "test/helpers_test.rb",
      "test/i18n_test.rb",
+     "test/integration/helpers_integration_test.rb",
+     "test/integration/rails_app/app/controllers/application_controller.rb",
+     "test/integration/rails_app/app/controllers/home_controller.rb",
+     "test/integration/rails_app/app/controllers/ponies_controller.rb",
+     "test/integration/rails_app/app/helpers/application_helper.rb",
+     "test/integration/rails_app/app/models/active_record/pony.rb",
+     "test/integration/rails_app/config/boot.rb",
+     "test/integration/rails_app/config/environment.rb",
+     "test/integration/rails_app/config/environments/test.rb",
+     "test/integration/rails_app/config/initializers/inflections.rb",
+     "test/integration/rails_app/config/initializers/link2.rb",
+     "test/integration/rails_app/config/initializers/new_rails_defaults.rb",
+     "test/integration/rails_app/config/initializers/session_store.rb",
+     "test/integration/rails_app/config/routes.rb",
      "test/link2_test.rb",
+     "test/orm/active_record.rb",
      "test/support/assertions_helper.rb",
-     "test/support/db_setup.rb",
      "test/support/debug_helper.rb",
      "test/support/substitutions_helper.rb",
+     "test/support/webrat_setup.rb",
      "test/support_test.rb",
      "test/test_helper.rb"
   ]

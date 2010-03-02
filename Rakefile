@@ -40,6 +40,9 @@ begin
     spec.add_dependency 'actionpack', '>= 2.3.0'
 
     spec.add_development_dependency 'test-unit', '= 1.2.3'
+    spec.add_development_dependency 'mocha', '>= 0.9.8'
+    spec.add_development_dependency 'webrat', '>= 0.7.0'
+    spec.add_development_dependency 'leftright', '>= 0.0.3'
     spec.add_development_dependency 'activerecord', '>= 2.3.0'
   end
 
