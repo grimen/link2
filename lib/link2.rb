@@ -67,7 +67,7 @@ module Link2
 
   # DOM selectors for easier manipulation of Link2 linksusing CSS/JavaScript.
   mattr_accessor :dom_selectors
-  @dom_selectors = true
+  @@dom_selectors = true
 
   class << self
 

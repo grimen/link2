@@ -28,74 +28,77 @@ module Link2
         url_options = args.pop if args.last.is_a?(Hash)
 
         case args.size
-          when 0
-            raise "No arguments specified. A least specify action or url."
-          when 1
-            if args.first.is_a?(String)
-              if args.first =~ URL_PATH_REGEX
-                # link 'http://example.com'  => link_to 'http://example.com', 'http://example.com'
-                label = url = args.shift
-              else
-                # link "Hello"  => link_to 'Hello', '#'
-                url = ::Link2::DEFAULT_LINK
-                label = args.shift
-              end
-            elsif args.first.is_a?(Symbol)
-              # link :new  => link_to I18n.t(:new, ...), new_{auto_detected_resource}_path
-              # link :back  => link_to I18n.t(:back, ...), (session[:return_to] || :back)
-              action = args.shift
-              resource = nil # TODO: auto-detect resource.
-              label = self.localized_label(action, resource, url_options)
-              url = self.url_for_args(action, resource, url_options)
-            elsif args.first.is_a?(Object)
-              # link @user  => link_to I18n.t(:show, ...), user_path(@user)
-              # link [:admin, @user]  => link_to I18n.t(:show, ...), admin_user_path(@user)
-              resource = args.shift
-              label, url = self.label_and_url_for_resource(resource, url_options)
+        when 0
+          raise "No arguments specified. A least specify action or url."
+        when 1
+          if args.first.is_a?(String)
+            if args.first =~ URL_PATH_REGEX
+              # link 'http://example.com'  => link_to 'http://example.com', 'http://example.com'
+              label = url = args.shift
             else
-              raise "Invalid 1st argument: #{args.inspect}"
+              # link "Hello"  => link_to 'Hello', '#'
+              url = ::Link2::DEFAULT_LINK
+              label = args.shift
             end
-          when 2
-            if args.first.is_a?(String)
-              if args.second.is_a?(String)
-                # link "Hello", hello_path  => link_to "Hello", hello_path
-                label, url = args.slice!(0..1)
-              elsif ::Link2::Support.resource_identifier_class?(args.second)
-                # link "New", :new  => link_to "New", new_{auto_detected_resource}_path
-                # link "<<", :back  => link_to "<<", (session[:return_to] || :back)
-                label, action = args.slice!(0..1)
-                resource = nil # TODO: auto-detect resource.
-                url = self.url_for_args(action, resource, url_options)
-              else
-                raise "Invalid 2nd argument: #{args.inspect}"
-              end
-            elsif args.first.is_a?(Symbol)
-              # TODO: Implement support for aray of nested resources.
-              if args.second.is_a?(Array)
-                raise ::Link2::NotImplementedYetError, "case link(:action, [...]) not yet supported. Need to refactor some stuff."
+          elsif args.first.is_a?(Symbol)
+            # link :new  => link_to I18n.t(:new, ...), new_{auto_detected_resource}_path
+            # link :back  => link_to I18n.t(:back, ...), (session[:return_to] || :back)
+            action = args.shift
+            resource = nil # TODO: auto-detect resource.
+            label = self.localized_label(action, resource, url_options)
+            url = self.url_for_args(action, resource, url_options)
+          elsif args.first.is_a?(Object)
+            # link @user  => link_to I18n.t(:show, ...), user_path(@user)
+            # link [:admin, @user]  => link_to I18n.t(:show, ...), admin_user_path(@user)
+            resource = args.shift
+            label, url = self.label_and_url_for_resource(resource, url_options)
+          else
+            raise "Invalid 1st argument: #{args.inspect}"
+          end
+        when 2
+          if args.first.is_a?(String)
+            if args.second.is_a?(String)
+              # link "Hello", hello_path  => link_to "Hello", hello_path
+              label, url = args.slice!(0..1)
+            elsif ::Link2::Support.resource_identifier_class?(args.second)
+              # link "New", :new  => link_to "New", new_{auto_detected_resource}_path
+              # link "<<", :back  => link_to "<<", (session[:return_to] || :back)
+              label, action = args.slice!(0..1)
+              resource = nil # TODO: auto-detect resource.
+              url = self.url_for_args(action, resource, url_options)
+            else
+              raise "Invalid 2nd argument: #{args.inspect}"
+            end
+          elsif args.first.is_a?(Symbol)
+            # TODO: Implement support for aray of nested resources.
+            if args.second.is_a?(Array)
+              raise ::Link2::NotImplementedYetError, "case link(:action, [...]) not yet supported. Need to refactor some stuff."
             end
 
-            # TODO: Cleanup.
-            if ::Link2::Support.resource_identifier_class?(args.second)
+            if args.second.is_a?(String)
+              # link :new, new_post_path  => link_to I18n.t(:new, ...), new_post_path
+              # link :back, root_path  => link_to I18n.t(:back, ...), (session[:return_to] || :back)
+              action, url = args.slice!(0..1)
+              label = self.localized_label(action, nil, url_options)
+            elsif ::Link2::Support.resource_identifier_class?(args.second)
               # link :new, Post  => link_to I18n.t(:new, ...), new_post_path
               # link :edit, @post  => link_to I18n.t(:edit, ...), edit_post_path(@post)
               # link :show, [:admin, @user]  => link_to I18n.t(:show, ...), admin_user_path(@user)
-              # link :back, root_path  => link_to I18n.t(:back, ...), (session[:return_to] || :back)
               action, resource = args.slice!(0..1)
               label = self.localized_label(action, resource, url_options)
               url = self.url_for_args(action, resource, url_options)
             else
               raise "Invalid 2nd argument: #{args.inspect}"
-                    end
-              else
-                raise "Invalid 1st argument: #{args.inspect}"
-              end
-              when 3
-              if args.first.is_a?(String)
-                if args.second.is_a?(Symbol)
-                  # TODO: Implement support for aray of nested resources.
-                  if args.third.is_a?(Array)
-                    raise ::Link2::NotImplementedYetError, 'case link("Label", :action, [...]) not yet supported. Need to refactor some stuff.'
+            end
+          else
+            raise "Invalid 1st argument: #{args.inspect}"
+          end
+        when 3
+          if args.first.is_a?(String)
+            if args.second.is_a?(Symbol)
+              # TODO: Implement support for aray of nested resources.
+              if args.third.is_a?(Array)
+                raise ::Link2::NotImplementedYetError, 'case link("Label", :action, [...]) not yet supported. Need to refactor some stuff.'
               end
 
               if ::Link2::Support.resource_identifier_class?(args.third)
@@ -112,7 +115,7 @@ module Link2
           else
             raise "Invalid 1st argument: #{args.inspect}"
           end
-        else
+        else # when else
           raise "Invalid number of arguments: #{args.inspect}."
         end
 

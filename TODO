@@ -26,6 +26,8 @@ TODO
 
 * ORM-tests: DataMapper, MongoMapper
 
+* Check Rails 3 compatibility.
+
 NOT SURE:
 
 * Make Link2 parse label and title-attribute for the link based on configuration: Link2.label_method = :to_s, Link2.attr_methods = {:title => :description}

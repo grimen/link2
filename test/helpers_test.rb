@@ -34,6 +34,10 @@ class HelpersTest < ActionView::TestCase
     assert_equal link_to('Hello', '#'), link('Hello')
   end
 
+  test "link(:action, url) should render link_to(t(:action, ...), url)" do
+    assert_equal link_to('Home', '/custom-home'), link(:home, '/custom-home')
+  end
+
   test "link(:action) should render link_to(t(:action, ...), url_for(:action => :action, ...)), auto-detecting resource" do
     # assert_equal link_to("New Fraggle"), link(:new)
     assert_raise(::Link2::NotImplementedYetError) { link(:new) }
@@ -155,6 +159,7 @@ class HelpersTest < ActionView::TestCase
       #         link(:edit, [@mookey, @mookeys_cool_aid])
 
       assert_equal link_to("Home", '/', :class => 'home'), link(:home)
+      assert_equal link_to("Home", '/', :class => 'home'), link(:home, '/')
     end
   end
 

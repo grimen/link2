@@ -56,7 +56,10 @@ h2. Usage
     # => link_to 'No operation', 'http://bash.org'
 
   link 'http://bash.org'
-    # => link_to 'http://bash.org', 'http://bash.org'
+      # => link_to 'http://bash.org', 'http://bash.org'
+
+  link :home, '/intro'
+    # => link_to I18n.t(:home, ...), '/intro'
 
   link :home
     # => link_to I18n.t(:home, ...), root_path
