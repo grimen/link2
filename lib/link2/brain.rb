@@ -196,7 +196,7 @@ module Link2
         elsif resource.is_a?(String)
           resource
         else
-          options[:controller] ||= self.controller_name_for_resource(resource)
+          options[:controller] ||= "/%s" % self.controller_name_for_resource(resource)
           options[:action] = action
           options[:id] = resource.id if !resource.is_a?(Class) && ::Link2::Support.record_class?(resource)
 
