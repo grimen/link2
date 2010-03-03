@@ -37,7 +37,7 @@ module Link2
       # for detecting current resource based on controller, action, etc.
       #
       def resource_identifier_class?(object)
-        object.is_a?(NilClass) || object.is_a?(Symbol) || self.record_class?(object)
+        (object.is_a?(NilClass) || object.is_a?(Symbol) || self.record_class?(object))
       end
 
       # Check if a specified objec is a record class type.

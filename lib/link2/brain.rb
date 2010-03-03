@@ -29,7 +29,7 @@ module Link2
 
         case args.size
         when 0
-          raise "No arguments specified. A least specify action or url."
+          raise ArgumentError, "No arguments specified. A least specify action or url."
         when 1
           if args.first.is_a?(String)
             if args.first =~ URL_PATH_REGEX
@@ -53,13 +53,19 @@ module Link2
             resource = args.shift
             label, url = self.label_and_url_for_resource(resource, url_options)
           else
-            raise "Invalid 1st argument: #{args.inspect}"
+            raise ArgumentError, "Invalid 1st argument: #{args.inspect}"
           end
         when 2
           if args.first.is_a?(String)
             if args.second.is_a?(String)
               # link "Hello", hello_path  => link_to "Hello", hello_path
               label, url = args.slice!(0..1)
+            elsif args.second.is_a?(Symbol) && ::Link2.url_for_mapping(args.second)
+              # link "Start", :home  => link_to I18n.t(:start, ...), root_path
+              # link "Cancel", :back  => link_to I18n.t(:cancel, ...), :back
+              label, action = args.slice!(0..1)
+              resource = nil
+              url = self.url_for_args(action, resource, url_options)
             elsif ::Link2::Support.resource_identifier_class?(args.second)
               # link "New", :new  => link_to "New", new_{auto_detected_resource}_path
               # link "<<", :back  => link_to "<<", (session[:return_to] || :back)
@@ -67,7 +73,7 @@ module Link2
               resource = nil # TODO: auto-detect resource.
               url = self.url_for_args(action, resource, url_options)
             else
-              raise "Invalid 2nd argument: #{args.inspect}"
+              raise ArgumentError, "Invalid 2nd argument: #{args.inspect}"
             end
           elsif args.first.is_a?(Symbol)
             # TODO: Implement support for aray of nested resources.
@@ -79,7 +85,15 @@ module Link2
               # link :new, new_post_path  => link_to I18n.t(:new, ...), new_post_path
               # link :back, root_path  => link_to I18n.t(:back, ...), (session[:return_to] || :back)
               action, url = args.slice!(0..1)
-              label = self.localized_label(action, nil, url_options)
+              resource = nil
+              label = self.localized_label(action, resource, url_options)
+            elsif args.second.is_a?(Symbol) && ::Link2.url_for_mapping(args.second)
+              # link :start, :home  => link_to I18n.t(:start, ...), root_path
+              # link :cancel, :back  => link_to I18n.t(:cancel, ...), :back
+              key, action = args.slice!(0..1)
+              resource = nil
+              label = self.localized_label(key, resource, url_options)
+              url = self.url_for_args(action, resource, url_options)
             elsif ::Link2::Support.resource_identifier_class?(args.second)
               # link :new, Post  => link_to I18n.t(:new, ...), new_post_path
               # link :edit, @post  => link_to I18n.t(:edit, ...), edit_post_path(@post)
@@ -88,10 +102,10 @@ module Link2
               label = self.localized_label(action, resource, url_options)
               url = self.url_for_args(action, resource, url_options)
             else
-              raise "Invalid 2nd argument: #{args.inspect}"
+              raise ArgumentError, "Invalid 2nd argument: #{args.inspect}"
             end
           else
-            raise "Invalid 1st argument: #{args.inspect}"
+            raise ArgumentError, "Invalid 1st argument: #{args.inspect}"
           end
         when 3
           if args.first.is_a?(String)
@@ -107,16 +121,16 @@ module Link2
                 label, action, resource = args.slice!(0..2)
                 url = self.url_for_args(action, resource, url_options)
               else
-                raise "Invalid 3rd argument: #{args.inspect}"
+                raise ArgumentError, "Invalid 3rd argument: #{args.inspect}"
               end
             else
-              raise "Invalid 2nd argument: #{args.inspect}"
+              raise ArgumentError, "Invalid 2nd argument: #{args.inspect}"
             end
           else
-            raise "Invalid 1st argument: #{args.inspect}"
+            raise ArgumentError, "Invalid 1st argument: #{args.inspect}"
           end
         else # when else
-          raise "Invalid number of arguments: #{args.inspect}."
+          raise ArgumentError, "Invalid number of arguments: #{args.inspect}."
         end
 
         if ::Link2.dom_selectors == true
@@ -127,8 +141,6 @@ module Link2
         args << html_options if html_options
 
         [label, url, *args]
-      rescue => e
-        raise ::ArgumentError, e
       end
 
       # Extracts a label and a url for a (polymorphic) resource.
@@ -186,8 +198,8 @@ module Link2
         action, resource = args
 
         if resource.nil?
-          url = ::Link2.url_for_mapping(action, resource) rescue nil
-          if url
+          url = ::Link2.url_for_mapping(action, resource)
+          if url.present?
             url
           else
             raise ::Link2::NotImplementedYetError,

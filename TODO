@@ -28,6 +28,7 @@ TODO
 
 * Check Rails 3 compatibility.
 
+* link_to_args MUST be refactored when the DSL is 100% settled. Not far from it, but feedback first.
 
 * Integration tests for namespaced controllers/models
 

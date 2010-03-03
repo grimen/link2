@@ -100,6 +100,8 @@ module Link2
        else
          expression
        end
+     rescue
+       nil
      end
 
    end

@@ -34,10 +34,6 @@ class HelpersTest < ActionView::TestCase
     assert_equal link_to('Hello', '#'), link('Hello')
   end
 
-  test "link(:action, url) should render link_to(t(:action, ...), url)" do
-    assert_equal link_to('Home', '/custom-home'), link(:home, '/custom-home')
-  end
-
   test "link(:action) should render link_to(t(:action, ...), url_for(:action => :action, ...)), auto-detecting resource" do
     # assert_equal link_to("New Fraggle"), link(:new)
     assert_raise(::Link2::NotImplementedYetError) { link(:new) }
@@ -69,6 +65,22 @@ class HelpersTest < ActionView::TestCase
   end
 
   # link(x, y, {}, {})
+
+  test "link(:action, url) should render link_to(t(:action, ...), url)" do
+    assert_equal link_to('Home', '/custom-home'), link(:home, '/custom-home')
+  end
+
+  test "link(..., :mapping) should render link_to(..., url_for_mapping(:mapping, ...))" do
+    assert_nothing_raised(Exception) { link("Home", :home) }
+    assert_equal link_to("Home", root_path), link("Home", :home)
+    assert_nothing_raised(Exception) { link(:home, :home) }
+    assert_equal link_to("Home", root_path), link(:home, :home)
+
+    assert_nothing_raised(Exception) { link("Back", :back) }
+    assert_equal link_to("Back", :back), link("Back", :back)
+    assert_nothing_raised(Exception) { link(:back, :back) }
+    assert_equal link_to("Back", :back), link(:back, :back)
+  end
 
   test "link(label, url) should render link_to(label, url)" do
     assert_equal link_to('New', '/posts/new'),              link('New', '/posts/new')

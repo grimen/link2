@@ -18,7 +18,7 @@ This is *not* a re-implementation of these helpers; rather it wraps these but pa
 * *Rapid & flexible* - prototyping-friendly link helpers - with no trade-offs, really.
 * *DRY* - based on specified arguments: Use what's know to make smart assumptions => DRYer - and more maintainable view code.
 * *I18n deluxe* - Lookup scoped translations based on action, model, etc., for more flexible translations - with lean defaults. Enhanced with some nifty interpolation features as well. Code first, translate later.
-* *Stable* - Full test-coverage for stability. Unit + Rails integration tests, check: @44 tests: all passed@
+* *Stable* - Full test-coverage for stability. Unit + Rails integration tests, check: @46 tests: all passed@
 * *Maintainable* - Well-documented code.
 
 h2. Installation
@@ -53,7 +53,7 @@ h2. Usage
     # => link_to 'No operation', '#'
 
   link "Hilarious", 'http://bash.org'
-    # => link_to 'No operation', 'http://bash.org'
+    # => link_to 'Hilarious', 'http://bash.org'
 
   link 'http://bash.org'
       # => link_to 'http://bash.org', 'http://bash.org'
@@ -72,6 +72,9 @@ h2. Usage
 
   link [@post, @comment]
     # => link_to I18n.t(:show, ...), post_comment_path(@post, @comment)
+
+  link :go_back, :back
+    # => link_to I18n.t(:go_back, ...), :back
 
   link :new, :post
     # => link_to I18n.t(:new, ...), new_post_path
