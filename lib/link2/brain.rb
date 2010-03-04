@@ -3,7 +3,8 @@
 module Link2
   module Brain
 
-    AutoDetectionFailed = Class.new(::NotImplementedError)
+    AutoDetectionFailed = Class.new(::ArgumentError)
+    NilArgument = Class.new(::ArgumentError)
 
     URL_PATH_REGEX = /\//
     CLASS_INSTANCE_STRING = /\#\<.*\:0x.*\>/
@@ -28,6 +29,8 @@ module Link2
 
         html_options = args.pop if args.last.is_a?(Hash)
         url_options = args.pop if args.last.is_a?(Hash)
+
+        raise NilArgument, "Passed argument is nil: #{args.inspect}." if args.any? { |arg| arg.nil? }
 
         case args.size
         when 0

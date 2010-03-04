@@ -19,7 +19,7 @@ This is *not* a re-implementation of these helpers; rather it wraps these but pa
 * *DRY* - based on specified arguments: Use what's know to make smart assumptions for more readable and maintainable view code.
 * *I18n deluxe* - Lookup scoped translations based on action, model, etc., for more flexible translations - with lean defaults. Enhanced with some nifty interpolation features as well. Code first, translate later.
 * *DOM Selectors* - Why defining DOM classes for RESTful links all the time when same patterns occur? Optionally DONE.
-* *Stable* - Full test-coverage for stability. Unit + Rails integration tests, check: @54 tests: all passed@
+* *Stable* - Full test-coverage for stability. Unit + Rails integration tests, check: @55 tests: all passed@
 * *Maintainable* - Well-documented code.
 
 h2. Installation

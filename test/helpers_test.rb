@@ -224,6 +224,24 @@ class HelpersTest < ActionView::TestCase
     assert_raise(::Link2::NotImplementedYetError) { ajax_button(:home, {}, {}) }
   end
 
+  # Nil
+
+  test "should throw error on any nil argument (excluding options)" do
+    self.stubs(:current_controller_name).returns('fraggles')
+    @fraggle = @mookey
+    assert_raise(::Link2::Brain::NilArgument) { link(nil) }
+
+    assert_raise(::Link2::Brain::NilArgument) { link(Object.new, nil) }
+    assert_raise(::Link2::Brain::NilArgument) { link(nil, Object.new) }
+
+    assert_raise(::Link2::Brain::NilArgument) { link(nil, nil, nil) }
+    assert_raise(::Link2::Brain::NilArgument) { link(Object.new, nil, nil) }
+    assert_raise(::Link2::Brain::NilArgument) { link(nil, Object.new, nil) }
+    assert_raise(::Link2::Brain::NilArgument) { link(nil, nil, Object.new) }
+    assert_raise(::Link2::Brain::NilArgument) { link(Object.new, Object.new, nil) }
+    assert_raise(::Link2::Brain::NilArgument) { link(Object.new, nil, Object.new) }
+  end
+
   # DOM selectors
 
   test "link should generate DOM ID and class reflecting action and resource class - if any" do
