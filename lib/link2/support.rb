@@ -28,6 +28,22 @@ module Link2
         raise "No such class: #{resource_class_name}"
       end
 
+      # Extract resource based on resource or collecton of resources.
+      #
+      # == Usage/Examples:
+      #
+      #   extract_resource?(nil)
+      #     # => nil
+      #
+      #   extract_resource?([])
+      #     # => nil
+      #
+      #   extract_resource?(@post)
+      #     # => @post
+      #
+      #   extract_resource?([@post_1, @post_2])
+      #     # => @post_2
+      #
       def extract_resource(resource)
         resource.compact! if resource.is_a?(Array)
         [resource].flatten.last
@@ -36,8 +52,55 @@ module Link2
       # Check if the specified object is a valid resource identifier class. Used
       # for detecting current resource based on controller, action, etc.
       #
+      #   resource_identifier_class?(:string)
+      #     # => false
+      #
+      #   resource_identifier_class?(:post)
+      #     # => true
+      #
+      #   resource_identifier_class?(String)
+      #     # => false
+      #
+      #   resource_identifier_class?(Post)
+      #     # => true
+      #
+      #   resource_identifier_class?("")
+      #     # => false
+      #
+      #   resource_identifier_class?(@post)
+      #     # => true
+      #
       def resource_identifier_class?(object)
         (object.is_a?(NilClass) || object.is_a?(Symbol) || self.record_class?(object))
+      end
+
+      # Check if passed object is an array for record instances, i.e. "collection".
+      # THis assumes all objects in the array is of same kind; makes little sense with mixing
+      # different records kinds in a collection, and in such case any auto-detection is hard.
+      #
+      # == Usage/Examples:
+      #
+      #   record_collection?([])
+      #     # => false
+      #
+      #   record_collection?(@post)
+      #     # => false
+      #
+      #   record_collection?([@post])
+      #     # => true
+      #
+      #   record_collection?([@post, @article])
+      #     # => false
+      #
+      #   record_collection?([@post, @post])
+      #     # => true
+      #
+      def record_collection?(collection_maybe)
+        if collection_maybe.present? && collection_maybe.is_a?(Array)
+          collection_maybe.compact.all? { |object| record_object?(object) }
+        else
+          false
+        end
       end
 
       # Check if a specified objec is a record class type.

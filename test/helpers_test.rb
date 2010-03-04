@@ -14,6 +14,7 @@ class HelpersTest < ActionView::TestCase
     ::Link2.i18n_scopes = [] # Keep it simple - no scoped lookups by default.
 
     @mookey = ::Fraggle.create(:name => 'Mookey')
+    @wembley = ::Fraggle.create(:name => 'Wembley')
     @mookeys_cool_aid = ::CoolAid.create(:name => 'Super-tasty')
   end
 
@@ -30,18 +31,49 @@ class HelpersTest < ActionView::TestCase
     assert_equal link_to('/posts?by=date', '/posts?by=date'),         link('/posts?by=date')
   end
 
-  test "link(label) should render link_to(str_label, '#')" do
+  test "link(label) should render link_to(label, '#')" do
     assert_equal link_to('Hello', '#'), link('Hello')
   end
 
-  test "link(:action) should render link_to(t(:action, ...), url_for(:action => :action, ...)), auto-detecting resource" do
-    # assert_equal link_to("New Fraggle"), link(:new)
-    assert_raise(::Link2::NotImplementedYetError) { link(:new) }
+  test "auto-detecting resource: link(:action) should render link_to(t(:action, ...), @resource)" do
+    self.expects(:current_controller_name).with(nil).returns('fraggles').at_least_once
+
+    assert_raise(::Link2::Brain::AutoDetectionFailed) do
+      link(:show)
+    end
+
+    @fraggle = @mookey
+
+    assert_nothing_raised(::Link2::Brain::AutoDetectionFailed) do
+      link(:show)
+    end
+
+    assert_equal link_to("Show", "/fraggles/#{@fraggle.id}"),               link(:show)
+    assert_equal link_to("Show", "/fraggles/#{@fraggle.id}", ONE_HASH),     link(:show, ONE_HASH)
+    assert_equal link_to("Show", "/fraggles/#{@fraggle.id}", *TWO_HASHES),  link(:show, *TWO_HASHES)
   end
 
-  test "link(:mapping) should render link_to(t(:mapping, ...), url_for_mapping(:mapping, ...)), auto-detecting resource" do
-    assert_equal link_to("Home", '/'), link(:home)
-    assert_equal link_to("Home", '/', ONE_HASH), link(:home, ONE_HASH)
+  test "auto-detecting collection: link(:action) should render link_to(t(:action, ...), @collection)" do
+    self.expects(:current_controller_name).with(nil).returns('fraggles').at_least_once
+
+    assert_raise(::Link2::Brain::AutoDetectionFailed) do
+      link(:index)
+    end
+
+    @fraggles = [@mookey, @wembley]
+
+    assert_nothing_raised(::Link2::Brain::AutoDetectionFailed) do
+      link(:index)
+    end
+
+    assert_equal link_to("Index", "/fraggles"),               link(:index)
+    assert_equal link_to("Index", "/fraggles", ONE_HASH),     link(:index, ONE_HASH)
+    assert_equal link_to("Index", "/fraggles", *TWO_HASHES),  link(:index, *TWO_HASHES)
+  end
+
+  test "link(:mapping) should render link_to(t(:mapping, ...), url_for_mapping(:mapping, ...)), lookup mapping" do
+    assert_equal link_to("Home", '/'),              link(:home)
+    assert_equal link_to("Home", '/', ONE_HASH),    link(:home, ONE_HASH)
     assert_equal link_to("Home", '/', *TWO_HASHES), link(:home, *TWO_HASHES)
 
     swap ::Link2, :action_mappings => {:secret => '/secret'} do
@@ -94,9 +126,9 @@ class HelpersTest < ActionView::TestCase
 
   test "link(:action) should render link_to(label, url_for(:action => :action, ...)), auto-detecting resource" do
     # assert_equal link_to("New Fraggle!!"), link("New Fraggle!!", :new)
-    assert_raise(::Link2::NotImplementedYetError) { link("New Fraggle!!", :new) }
-    assert_raise(::Link2::NotImplementedYetError) { link("New Fraggle!!", :new, ONE_HASH) }
-    assert_raise(::Link2::NotImplementedYetError) { link("New Fraggle!!", :new, *TWO_HASHES) }
+    assert_raise(::Link2::Brain::AutoDetectionFailed) { link("New Fraggle!!", :new) }
+    assert_raise(::Link2::Brain::AutoDetectionFailed) { link("New Fraggle!!", :new, ONE_HASH) }
+    assert_raise(::Link2::Brain::AutoDetectionFailed) { link("New Fraggle!!", :new, *TWO_HASHES) }
   end
 
   test "link(label, action) should render link_to(label, url_for_mapping(:mapping, ...)), auto-detecting resource" do
@@ -132,6 +164,42 @@ class HelpersTest < ActionView::TestCase
     assert_raise(::Link2::NotImplementedYetError) { link(:edit, [@mookey, @mookeys_cool_aid]) }
     assert_raise(::Link2::NotImplementedYetError) { link(:edit, [@mookey, @mookeys_cool_aid], ONE_HASH) }
     assert_raise(::Link2::NotImplementedYetError) { link(:edit, [@mookey, @mookeys_cool_aid], *TWO_HASHES) }
+  end
+
+  test "auto-detecting resource: link(label, :action) should render link_to(label, @resource, :action => :action)" do
+    self.expects(:current_controller_name).with(nil).returns('fraggles').at_least_once
+
+    assert_raise(::Link2::Brain::AutoDetectionFailed) do
+      link("Show it", :show)
+    end
+
+    @fraggle = @mookey
+
+    assert_nothing_raised(::Link2::Brain::AutoDetectionFailed) do
+      link("Show it", :show)
+    end
+
+    assert_equal link_to("Show it", "/fraggles/#{@fraggle.id}"),               link("Show it", :show)
+    assert_equal link_to("Show it", "/fraggles/#{@fraggle.id}", ONE_HASH),     link("Show it", :show, ONE_HASH)
+    assert_equal link_to("Show it", "/fraggles/#{@fraggle.id}", *TWO_HASHES),  link("Show it", :show, *TWO_HASHES)
+  end
+
+  test "auto-detecting collection: link(label, :action) should render link_to(label, @collection, :action => :action)" do
+    self.expects(:current_controller_name).with(nil).returns('fraggles').at_least_once
+
+    assert_raise(::Link2::Brain::AutoDetectionFailed) do
+      link("All", :index)
+    end
+
+    @fraggles = [@mookey, @wembley]
+
+    assert_nothing_raised(::Link2::Brain::AutoDetectionFailed) do
+      link("All", :index)
+    end
+
+    assert_equal link_to("All", "/fraggles"),               link("All", :index)
+    assert_equal link_to("All", "/fraggles", ONE_HASH),     link("All", :index, ONE_HASH)
+    assert_equal link_to("All", "/fraggles", *TWO_HASHES),  link("All", :index, *TWO_HASHES)
   end
 
   # link(x, y,  z, {}, {})

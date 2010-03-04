@@ -3,6 +3,8 @@
 module Link2
   module Brain
 
+    AutoDetectionFailed = Class.new(::NotImplementedError)
+
     URL_PATH_REGEX = /\//
     CLASS_INSTANCE_STRING = /\#\<.*\:0x.*\>/
 
@@ -92,6 +94,7 @@ module Link2
               # link :cancel, :back  => link_to I18n.t(:cancel, ...), :back
               key, action = args.slice!(0..1)
               resource = nil
+              resource = self.auto_detect_resource || self.auto_detect_resource
               label = self.localized_label(key, resource, url_options)
               url = self.url_for_args(action, resource, url_options)
             elsif ::Link2::Support.resource_identifier_class?(args.second)
@@ -197,17 +200,17 @@ module Link2
         options = args.extract_options!.dup
         action, resource = args
 
-        if resource.nil?
-          url = ::Link2.url_for_mapping(action, resource)
-          if url.present?
-            url
-          else
-            raise ::Link2::NotImplementedYetError,
-              "Resource needs to be specified for non-mapped actions; auto-detection of resource(s) not implemented yet."
-          end
-        elsif resource.is_a?(String)
+        if resource.is_a?(String) # url
           resource
+        elsif resource.nil? && url = ::Link2.url_for_mapping(action, resource) # mapping
+          url
         else
+          resource ||= self.auto_detect_resource || self.auto_detect_collection
+          if resource.nil?
+            raise ::Link2::Brain::AutoDetectionFailed,
+              "Auto-detection of resource or collection failed for args: #{[action, resource].inspect}."
+          end
+
           options[:controller] ||= "/%s" % self.controller_name_for_resource(resource)
           options[:action] = action
           options[:id] = resource.id if !resource.is_a?(Class) && ::Link2::Support.record_class?(resource)
@@ -243,12 +246,21 @@ module Link2
       #   controller_name_for_resource(@post)
       #     # => "posts"
       #
-      def controller_name_for_resource(resource = nil)
-        resource_class = ::Link2::Support.find_resource_class(resource)
-        if ::Link2::Support.record_class?(resource_class)
-          resource_class.to_s.tableize # rescue nil
+      #   controller_name_for_resource([@post_1, @post_2])
+      #     # => "posts"
+      #
+      def controller_name_for_resource(resource_or_collection = nil)
+        if resource_or_collection
+          if ::Link2::Support.record_collection?(resource_or_collection)
+            resource_or_collection.first.class.name.tableize
+          else
+            resource_class = ::Link2::Support.find_resource_class(resource_or_collection)
+            resource_class.name.tableize if ::Link2::Support.record_class?(resource_class)
+          end
         end || self.controller.controller_name
       end
+      # When no resource is passed +current_controller_name+ makes more sense.
+      alias :current_controller_name :controller_name_for_resource
 
       # Parse human resource name for a specified resource.
       #
@@ -279,6 +291,30 @@ module Link2
         end
         custom_name = resource_class.human_name.downcase if custom_name.blank?
         custom_name
+      end
+
+      # Auto-detect current view resource instance based on expected ivar-name.
+      #
+      def auto_detect_resource
+        if self.respond_to?(:resource) # InheritedResources pattern
+          self.resource
+        else
+          self.instance_variable_get(:"@#{self.current_controller_name.singularize}") # @post
+        end
+      rescue
+        nil
+      end
+
+      # Auto-detect current view resource collection instance based on expected ivar-name.
+      #
+      def auto_detect_collection
+        if self.respond_to?(:collection) # InheritedResources pattern
+          self.collection
+        else
+          self.instance_variable_get(:"@#{self.current_controller_name.pluralize}") # @posts
+        end
+      rescue
+        nil
       end
 
       # Attach Link2 semantic DOM selector attributes (attributes "id" and "class") based on

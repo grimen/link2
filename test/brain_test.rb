@@ -9,6 +9,7 @@ class BrainTest < ActionView::TestCase
     ::I18n.locale = :en
 
     @mookey = ::Fraggle.create(:name => 'Mookey')
+    @wembley = ::Fraggle.create(:name => 'Wembley')
     @tweaked_mookey = ::Fraggle.create(:name => 'Mookey 2.0')
     @tweaked_mookey.class_eval do
       def to_s
@@ -49,8 +50,25 @@ class BrainTest < ActionView::TestCase
   end
 
   test "#controller_name_for_resource: should return current controller if no resource is specified or is nil" do
-    # Current: TestController
-    assert_equal 'test', controller_name_for_resource(nil)
+    self.expects(:controller_name_for_resource).with(nil).returns('fraggles').at_least_once
+    assert_equal 'fraggles', controller_name_for_resource(nil)
+  end
+
+  test "#current_controller_name: should return current controller" do
+    self.expects(:current_controller_name).returns('fraggles').at_least_once
+    assert_equal 'fraggles', current_controller_name
+  end
+
+  test "#auto_detect_resource: " do
+    self.expects(:current_controller_name).returns('fraggles').at_least_once
+    @fraggle = @mookey
+    assert_equal @fraggle, auto_detect_resource
+  end
+
+  test "#auto_detect_collection: should " do
+    self.expects(:current_controller_name).returns('fraggles').at_least_once
+    @fraggles = [@mookey, @wembley]
+    assert_equal @fraggles, auto_detect_collection
   end
 
   test "#human_name_for_resource: should return reosurce name based on resource using #to_s or #human_name" do

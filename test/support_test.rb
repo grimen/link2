@@ -26,10 +26,26 @@ class SupportTest < ActiveSupport::TestCase
     assert_not ::Link2::Support.resource_identifier_class?(::Unicorn)
   end
 
+  test "#record_collection?: should be true only i passed value is array of record objects of same kind" do
+    assert_not ::Link2::Support.record_collection?([])
+    assert_not ::Link2::Support.record_collection?(::Fraggle.new)
+    assert_not ::Link2::Support.record_collection?([::Unicorn.new])
+    assert_not ::Link2::Support.record_collection?([::Unicorn.new, ::Fraggle.new])
+
+    assert ::Link2::Support.record_collection?([::Fraggle.new])
+    assert ::Link2::Support.record_collection?([::Fraggle.new, ::Fraggle.new])
+  end
+
   test "#record_class?: should only be true for record classes" do
     assert ::Link2::Support.record_class?(::Fraggle)
 
     assert_not ::Link2::Support.record_class?(::Unicorn)
+  end
+
+  test "#record_object?: should only be true for record objects" do
+    assert ::Link2::Support.record_class?(::Fraggle.new)
+
+    assert_not ::Link2::Support.record_class?(::Unicorn.new)
   end
 
 end

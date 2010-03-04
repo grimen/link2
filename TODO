@@ -1,16 +1,6 @@
 TODO
 
-1) Auto-detect current resource instance for member views (non-collection)
-
-    link(:edit)   =>  link(:edit, @post)
-
-  Detect using "self.controller_name.singularize", or use "resource" if InheritedResources is used.
-
-2) [ISSUE:] Implement the problematic one: link(:action, [@parent, @resource])
-
-* Collections detection:
-
-    link(:index)  =>  link(@posts)   =>  link(:index, @posts)   =>  link("Index", @posts)
+1) [ISSUE:] Implement the problematic one: link(:action, [@parent, @resource])
 
 * Fix action mapping procs to handle named scopes. Should work, but do not for some reason. =/
 
@@ -28,10 +18,27 @@ TODO
 
 * Check Rails 3 compatibility.
 
-* link_to_args MUST be refactored when the DSL is 100% settled. Not far from it, but feedback first.
+* Link2::Brain#link_to_args MUST be refactored when the DSL is 100% settled. Not far from it, but feedback first.
 
 * Integration tests for namespaced controllers/models
 
+* This works:
+    link_to x, :terms   =>  link_to x, terms_path
+
+  So maybe this should work the same?:
+    link :terms, :terms  <=>  link :terms   =>  link :terms, terms_path
+
+  The middle part (auto-detect route for :fraggle before resource :fraggle) maybe too abstract DSL, not sure.
+
+
 NOT SURE:
+
+* Check with Rails routes (RouteSet) if current action is a :member or :collection, and look for resource vs. collection:
+
+    link(:show)   =>  link(@post)     =>  link(:show, @post)      =>  link("Show", @posts)
+    link(:index)  =>  link(@posts)    =>  link(:index, @posts)    =>  link("Index", @posts)
+
+  Current implementation is a bit dumber but should work okay: resource_or_collection = @post || @posts, where
+  @post is tried first. Maybe should be developers responsibility like now...
 
 * Make Link2 parse label and title-attribute for the link based on configuration: Link2.label_method = :to_s, Link2.attr_methods = {:title => :description}

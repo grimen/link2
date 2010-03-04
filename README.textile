@@ -16,9 +16,10 @@ This is *not* a re-implementation of these helpers; rather it wraps these but pa
 *Goals/Features:*
 
 * *Rapid & flexible* - prototyping-friendly link helpers - with no trade-offs, really.
-* *DRY* - based on specified arguments: Use what's know to make smart assumptions => DRYer - and more maintainable view code.
+* *DRY* - based on specified arguments: Use what's know to make smart assumptions for more readable and maintainable view code.
 * *I18n deluxe* - Lookup scoped translations based on action, model, etc., for more flexible translations - with lean defaults. Enhanced with some nifty interpolation features as well. Code first, translate later.
-* *Stable* - Full test-coverage for stability. Unit + Rails integration tests, check: @46 tests: all passed@
+* *DOM Selectors* - Why defining DOM classes for RESTful links all the time when same patterns occur? Optionally DONE.
+* *Stable* - Full test-coverage for stability. Unit + Rails integration tests, check: @54 tests: all passed@
 * *Maintainable* - Well-documented code.
 
 h2. Installation
@@ -52,11 +53,11 @@ h2. Usage
   link "No operation"
     # => link_to 'No operation', '#'
 
-  link "Hilarious", 'http://bash.org'
-    # => link_to 'Hilarious', 'http://bash.org'
-
   link 'http://bash.org'
       # => link_to 'http://bash.org', 'http://bash.org'
+
+  link "Hilarious", 'http://bash.org'
+    # => link_to 'Hilarious', 'http://bash.org'
 
   link :home, '/intro'
     # => link_to I18n.t(:home, ...), '/intro'
@@ -66,6 +67,15 @@ h2. Usage
 
   link :back
     # => link_to I18n.t(:home, ...), :back
+
+  link :index
+     # => link_to I18n.t(:index, ...), posts_path                     # Note: auto-detected
+
+  link :trash
+    # => link_to I18n.t(:trash, ...), trash_post_path(@post)          # Note: auto-detected
+
+  link :new
+     # => link_to I18n.t(:new, ...), new_post_path(:id => @post.id)   # Note: auto-detected, id for current resource - if found - passed, makes the implementation more generic
 
   link @post
     # => link_to I18n.t(:show, ...), post_path(@post)
@@ -83,7 +93,7 @@ h2. Usage
     # => link_to I18n.t(:new, ...), new_post_path
 
   link :new, @post
-    # => link_to I18n.t(:new, ...), new_post_path(:id => @post.id)  # ...if you think about it; useful for cloning.
+    # => link_to I18n.t(:new, ...), new_post_path(:id => @post.id)    # ...if you think about it; useful for cloning.
 
   link :edit, @post
     # => link_to I18n.t(:edit, ...), edit_post_path(@post)
@@ -93,6 +103,9 @@ h2. Usage
 
   link :kick, @post
     # => link_to I18n.t(:kick, ...), kick_post_path(@post)
+
+  link "All items", :index
+    # => link_to "All items", posts_path                              # Note: auto-detected, see above
 
   link "New one!", :new, Post
     # => link_to "New one!", new_post_path
@@ -108,14 +121,11 @@ h2. Usage
 <pre>
   link :edit, [@post, @comment]
     # => ::Link2::NotImplementedYetError, "case link(:action, [...]) not yet supported. Need to refactor some stuff."
-
-  link :new
-    # => ::Link2::NotImplementedYetError, "Auto-detection of resource is not supported yet."
 </pre>
 
 Same works for @button_to@, and you also can optionally use the branded aliases: @link2@ and @button2@.
 
-h2. Options hashes: URL Options + HTML Options
+h2. Options hashes: URL + HTML Options
 
 Link2 link helpers accept options in the same way as the core helpers @link_to@/@button_to@: first @options@ (a.k.a. @url_options@) and then @html_options@. See the "Rails core UrlHelpers documentation":http://railsapi.com/doc/rails-v2.3.5/classes/ActionView/Helpers/UrlHelper.html#M002452 for details on this. Link2 helpers just pass any non-Link2-related options to the Rails core helpers. In other words no need to learn a new API; just pass the needed options like in the past.
 
