@@ -35,6 +35,12 @@ class HelpersTest < ActionView::TestCase
     assert_equal link_to('Hello', '#'), link('Hello')
   end
 
+  test "link(label_or_action, :onclick => '...') should render link_to_function(label, 'javascript: ...')" do
+    if self.respond_to?(:link_to_function) # Note: Deprecated in Rails 3
+      assert_equal link_to_function('Hello', 'alert("hello")'), link('Hello', :onclick => 'alert("hello"); return false;')
+    end
+  end
+
   test "auto-detecting resource: link(:action) should render link_to(t(:action, ...), @resource)" do
     self.expects(:current_controller_name).with(nil).returns('fraggles').at_least_once
 
@@ -90,7 +96,7 @@ class HelpersTest < ActionView::TestCase
     # assert_equal link_to("Show", "?"), link(::Fraggle) # test this stupid case?
   end
 
-  test "link([@parent, @resource]) should render link_to(t(:show, ...), polymorphic_path([@parent, @resource]))" do
+  test "link([@parent_resource, @resource]) should render link_to(t(:show, ...), polymorphic_path([@parent_resource, @resource]))" do
     assert_equal link_to("Show", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}"),              link([@mookey, @mookeys_cool_aid])
     assert_equal link_to("Show", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}", ONE_HASH),    link([@mookey, @mookeys_cool_aid], ONE_HASH)
     assert_equal link_to("Show", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}", *TWO_HASHES), link([@mookey, @mookeys_cool_aid], *TWO_HASHES)
@@ -229,6 +235,7 @@ class HelpersTest < ActionView::TestCase
   test "should throw error on any nil argument (excluding options)" do
     self.stubs(:current_controller_name).returns('fraggles')
     @fraggle = @mookey
+
     assert_raise(::Link2::Brain::NilArgument) { link(nil) }
 
     assert_raise(::Link2::Brain::NilArgument) { link(Object.new, nil) }

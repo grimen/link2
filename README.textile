@@ -19,7 +19,7 @@ This is *not* a re-implementation of these helpers; rather it wraps these but pa
 * *DRY* - based on specified arguments: Use what's know to make smart assumptions for more readable and maintainable view code.
 * *I18n deluxe* - Lookup scoped translations based on action, model, etc., for more flexible translations - with lean defaults. Enhanced with some nifty interpolation features as well. Code first, translate later.
 * *DOM Selectors* - Why defining DOM classes for RESTful links all the time when same patterns occur? Optionally DONE.
-* *Stable* - Full test-coverage for stability. Unit + Rails integration tests, check: @55 tests: all passed@
+* *Stable* - Full test-coverage for stability. Unit + Rails integration tests, check: @56 tests: all passed@
 * *Maintainable* - Well-documented code.
 
 h2. Installation
@@ -127,7 +127,7 @@ Same works for @button_to@, and you also can optionally use the branded aliases:
 
 h2. Options hashes: URL + HTML Options
 
-Link2 link helpers accept options in the same way as the core helpers @link_to@/@button_to@: first @options@ (a.k.a. @url_options@) and then @html_options@. See the "Rails core UrlHelpers documentation":http://railsapi.com/doc/rails-v2.3.5/classes/ActionView/Helpers/UrlHelper.html#M002452 for details on this. Link2 helpers just pass any non-Link2-related options to the Rails core helpers. In other words no need to learn a new API; just pass the needed options like in the past.
+Link2 link helpers accept options in the same way as the core helpers @link_to@ and @button_to@: first @options@ (a.k.a. @url_options@) and then @html_options@. See the "Rails core UrlHelpers documentation":http://railsapi.com/doc/rails-v2.3.5/classes/ActionView/Helpers/UrlHelper.html#M002452 for details on this. Link2 helpers just pass any non-Link2-related options to the Rails core helpers. In other words no need to learn a new API; just pass the needed options like in the past.
 
 h2. Expected arguments (...but the examples should be enough)
 
@@ -248,13 +248,33 @@ This behavior is enabled by default but can be disabled just in case; preferably
   end
 </pre>
 
+h2. The other fellows...
+
+*@link_to_function@*
+
+To get the Link2 features for @link_to_function@ - which is *deprecated in Rails 3* because of it's obtrusive nature (note: obtrusive should be avoided) - you can get such behaviour with Link2 (if you must) by specifying @:onclick@ HTML attribute like so:
+
+<pre>
+  link :hello, :onclick => "alert('Hello world!')"
+</pre>
+
+*@link_to_remote@*
+
+No Link2-wrapper for this one. Also, it's *deprecated in Rails 3* as well for same reasons as above. In Rails 3 it should be possible to call it like so:
+
+<pre>
+  link :hello, say_hello_path(@world), :remote => true
+</pre>
+
+...but as Link2 is *not tested with Rails 3* yet; use the old-school @link_to@ for now.
+
+*@link_to_if@ + @link_to_unless@*
+
+I didn't extend the behavior for the helpers @link_to_if@ and @link_to_unless@ because I simply think they should not be used in Rails apps; my strong opinion is that they introduce unnecessary complexity in code and make it less readable. I also skipped @link_to_if_current@ because it's not very thorough implementation - even an extra URI slash make it confused, which is funny. Hate it, or LOVE IT.
+
 h2. TODO
 
 See "TODO":http://github.com/grimen/link2/blob/master/TODO
-
-h2. A note on design decisions
-
-I didn't extend the behavior for the helper @link_to_if@, @link_to_unless@ because I simply think they should not be used in Rails apps; my strong opinion is that they introduce unnecessary complexity in code and make it less readable. I also skipped @link_to_if_current@ because it's not very thorough implementation - even an extra URI slash make it confused, which is funny. Hate it, or LOVE IT.
 
 h2. License
 

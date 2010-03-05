@@ -13,11 +13,11 @@ require File.join(File.dirname(__FILE__), 'lib', 'link2', 'version')
 #   rake build
 #   sudo rake install
 #
-# == Git tag & push to origin/master
+# == Git tag & push to origin/master and push gem to Rubygems.org:
 #
 #   rake release
 #
-# == Release to Gemcutter.org:
+# == Release to Rubygems.org:
 #
 #   rake gemcutter:release
 #

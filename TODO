@@ -6,16 +6,6 @@ TODO
 
 * Fix action mapping procs to receive session, params, etc in a options hash. My mocking/stubbing don't want to work. ='(
 
-* Add support: #link_to_function + #button_to_function: I18n, more?
-
-    js_link(:hello, "alert('Clicked :hello.');")  =>  link_to_function(I18n.t(:hello, ...), "alert('Clicked :hello.');")
-
-* Add support: #link_to_remote + #button_to_remote: I18n, more? Could probably be cleaned up quite a lot.
-
-    ajax_link(...)
-
-* ORM-tests: DataMapper, MongoMapper
-
 * Check Rails 3 compatibility.
 
 * Link2::Brain#link_to_args MUST be refactored when the DSL is 100% settled. Not far from it, but feedback first.
@@ -30,6 +20,7 @@ TODO
 
   The middle part (auto-detect route for :fraggle before resource :fraggle) maybe too abstract DSL, not sure.
 
+* ORM-tests: DataMapper, MongoMapper
 
 NOT SURE:
 
@@ -42,3 +33,9 @@ NOT SURE:
   @post is tried first. Maybe should be developers responsibility like now...
 
 * Make Link2 parse label and title-attribute for the link based on configuration: Link2.label_method = :to_s, Link2.attr_methods = {:title => :description}
+
+* Add support for: #link_to_remote + #button_to_remote in Rails 2.x, with:
+
+    link(..., :remote => true)
+
+  ...or not: Maybe only support in Rails 3.
