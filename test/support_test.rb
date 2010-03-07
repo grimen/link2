@@ -19,10 +19,11 @@ class SupportTest < ActiveSupport::TestCase
   end
 
   test "#resource_identifier_class?: should only be true for valid classes" do
-    assert ::Link2::Support.resource_identifier_class?(nil)
     assert ::Link2::Support.resource_identifier_class?(:hello)
     assert ::Link2::Support.resource_identifier_class?(::Fraggle)
+    assert ::Link2::Support.resource_identifier_class?(::Fraggle.new)
 
+    assert_not ::Link2::Support.resource_identifier_class?(nil)
     assert_not ::Link2::Support.resource_identifier_class?(::Unicorn)
   end
 

@@ -38,7 +38,11 @@ class HelpersTest < ActionView::TestCase
   test "link(label_or_action, :onclick => '...') should render link_to_function(label, 'javascript: ...')" do
     if self.respond_to?(:link_to_function) # Note: Deprecated in Rails 3
       assert_equal link_to_function('Hello', 'alert("hello")'), link('Hello', :onclick => 'alert("hello"); return false;')
+      assert_equal link_to_function('Hello', 'alert("hello")'), link(:hello, :onclick => 'alert("hello"); return false;')
     end
+
+    assert_equal link_to('Hello', '#', :onclick => 'alert("hello"); return false;'), link('Hello', :onclick => 'alert("hello"); return false;')
+    assert_equal link_to('Hello', '#', :onclick => 'alert("hello"); return false;'), link(:hello, :onclick => 'alert("hello"); return false;')
   end
 
   test "auto-detecting resource: link(:action) should render link_to(t(:action, ...), @resource)" do

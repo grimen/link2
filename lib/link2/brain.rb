@@ -49,8 +49,8 @@ module Link2
             # link :new  => link_to I18n.t(:new, ...), new_{auto_detected_resource}_path
             # link :back  => link_to I18n.t(:back, ...), (session[:return_to] || :back)
             action = args.shift
-            resource = nil # TODO: auto-detect resource.
-            label = self.localized_label(action, resource, url_options)
+            label = self.localized_label(action, resource = nil, url_options)
+            resource = false if html_options && html_options.key?(:onclick) # false => do not auto-detect
             url = self.url_for_args(action, resource, url_options)
           elsif args.first.is_a?(Object)
             # link @user  => link_to I18n.t(:show, ...), user_path(@user)
@@ -69,19 +69,17 @@ module Link2
               # link "Start", :home  => link_to I18n.t(:start, ...), root_path
               # link "Cancel", :back  => link_to I18n.t(:cancel, ...), :back
               label, action = args.slice!(0..1)
-              resource = nil
-              url = self.url_for_args(action, resource, url_options)
+              url = self.url_for_args(action, resource = nil, url_options)
             elsif ::Link2::Support.resource_identifier_class?(args.second)
               # link "New", :new  => link_to "New", new_{auto_detected_resource}_path
               # link "<<", :back  => link_to "<<", (session[:return_to] || :back)
               label, action = args.slice!(0..1)
-              resource = nil # TODO: auto-detect resource.
-              url = self.url_for_args(action, resource, url_options)
+              url = self.url_for_args(action, resource = nil, url_options)
             else
               raise ArgumentError, "Invalid 2nd argument: #{args.inspect}"
             end
           elsif args.first.is_a?(Symbol)
-            # TODO: Implement support for aray of nested resources.
+            # TODO: Implement support for array of nested resources.
             if args.second.is_a?(Array)
               raise ::Link2::NotImplementedYetError, "case link(:action, [...]) not yet supported. Need to refactor some stuff."
             end
@@ -90,15 +88,12 @@ module Link2
               # link :new, new_post_path  => link_to I18n.t(:new, ...), new_post_path
               # link :back, root_path  => link_to I18n.t(:back, ...), (session[:return_to] || :back)
               action, url = args.slice!(0..1)
-              resource = nil
-              label = self.localized_label(action, resource, url_options)
+              label = self.localized_label(action, resource = nil, url_options)
             elsif args.second.is_a?(Symbol) && ::Link2.url_for_mapping(args.second)
               # link :start, :home  => link_to I18n.t(:start, ...), root_path
               # link :cancel, :back  => link_to I18n.t(:cancel, ...), :back
               key, action = args.slice!(0..1)
-              resource = nil
-              resource = self.auto_detect_resource || self.auto_detect_resource
-              label = self.localized_label(key, resource, url_options)
+              label = self.localized_label(key, resource = nil, url_options)
               url = self.url_for_args(action, resource, url_options)
             elsif ::Link2::Support.resource_identifier_class?(args.second)
               # link :new, Post  => link_to I18n.t(:new, ...), new_post_path
@@ -116,7 +111,7 @@ module Link2
         when 3
           if args.first.is_a?(String)
             if args.second.is_a?(Symbol)
-              # TODO: Implement support for aray of nested resources.
+              # TODO: Implement support for array of nested resources.
               if args.third.is_a?(Array)
                 raise ::Link2::NotImplementedYetError, 'case link("Label", :action, [...]) not yet supported. Need to refactor some stuff.'
               end
@@ -203,7 +198,9 @@ module Link2
         options = args.extract_options!.dup
         action, resource = args
 
-        if resource.is_a?(String) # url
+        if resource == false # javascript onclick; disable resource auto-detection
+          ::Link2::DEFAULT_LINK
+        elsif resource.is_a?(String) # url
           resource
         elsif resource.nil? && url = ::Link2.url_for_mapping(action, resource) # mapping
           url

@@ -71,7 +71,7 @@ module Link2
       #     # => true
       #
       def resource_identifier_class?(object)
-        (object.is_a?(NilClass) || object.is_a?(Symbol) || self.record_class?(object))
+        (object.is_a?(Symbol) || self.record_class?(object))
       end
 
       # Check if passed object is an array for record instances, i.e. "collection".
