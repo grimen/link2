@@ -272,6 +272,22 @@ No Link2-wrapper for this one. Also, it's *deprecated in Rails 3* as well for sa
 
 I didn't extend the behavior for the helpers @link_to_if@ and @link_to_unless@ because I simply think they should not be used in Rails apps; my strong opinion is that they introduce unnecessary complexity in code and make it less readable. I also skipped @link_to_if_current@ because it's not very thorough implementation - even an extra URI slash make it confused, which is funny. Hate it, or LOVE IT.
 
+h2. Inspiration
+
+I really like the "declarative_authorization":http://github.com/stffn/declarative_authorization view helper DSL for checking permissions on models, and brought the pattern to the link helpers - they are like *ying & yang*:
+
+<pre>
+  link(:edit, @account) if permitted_to?(:edit, @account)
+</pre>
+
+...but I usually mix it with an alias:
+
+<pre>
+  link(:edit, @account) if can?(:edit, @account)
+</pre>
+
+Nice, huh? =)
+
 h2. TODO
 
 See "TODO":http://github.com/grimen/link2/blob/master/TODO

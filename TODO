@@ -6,11 +6,11 @@ TODO
 
 * Fix action mapping procs to receive session, params, etc in a options hash. My mocking/stubbing don't want to work. ='(
 
+* Integration tests for namespaced controllers/models
+
 * Check Rails 3 compatibility.
 
 * Link2::Brain#link_to_args MUST be refactored when the DSL is 100% settled. Not far from it, but feedback first.
-
-* Integration tests for namespaced controllers/models
 
 * This works:
     link_to x, :terms   =>  link_to x, terms_path
