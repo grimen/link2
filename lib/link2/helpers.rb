@@ -5,10 +5,6 @@ module Link2
 
     include ::Link2::Brain
 
-    def self.included(base)
-      include JavascriptLinkHelpers
-    end
-
     # Enhanced +link_to+ helper.
     #
     # TODO: Documentation for this helper. For now the README should be sufficient.
@@ -30,28 +26,6 @@ module Link2
       button_to(*args)
     end
     alias :button2 :button
-
-    # Rails 3-deprecations - unless +prototype_legacy_helper+-plugin.
-
-    module JavascriptLinkHelpers
-      def js_link(*args)
-        raise ::Link2::NotImplementedYetError
-      end
-
-      def js_button(*args)
-        raise ::Link2::NotImplementedYetError
-      end
-
-      def ajax_link(*args)
-        raise ::Link2::NotImplementedYetError
-      end
-      alias :remote_link :ajax_link
-
-      def ajax_button(*args)
-        raise ::Link2::NotImplementedYetError
-      end
-      alias :remote_button :ajax_button
-    end
 
   end
 end

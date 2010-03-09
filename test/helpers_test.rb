@@ -224,16 +224,6 @@ class HelpersTest < ActionView::TestCase
     assert_equal link_to("Editish", "/fraggles/#{@mookey.id}/edit", *TWO_HASHES), link("Editish", :edit, @mookey, *TWO_HASHES)
   end
 
-  test "js_link should not be implemented (yet)" do
-    assert_raise(::Link2::NotImplementedYetError) { js_link(:alert, 'alert("New");', {}, {}) }
-    assert_raise(::Link2::NotImplementedYetError) { js_button(:alert, 'alert("New");', {}, {}) }
-  end
-
-  test "ajax_link should not be implemented (yet)" do
-    assert_raise(::Link2::NotImplementedYetError) { ajax_link(:home, {}, {}) }
-    assert_raise(::Link2::NotImplementedYetError) { ajax_button(:home, {}, {}) }
-  end
-
   # Nil
 
   test "should throw error on any nil argument (excluding options)" do
