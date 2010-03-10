@@ -14,8 +14,14 @@ TODO
 
 * [COMPAT:] Check Rails 3 compatibility.
 
+* [ENHANCEMENT:] Check with Rails routes (RouteSet) if current action is a :member or :collection:
+
+    link(:show)   =>  link(:show, @post)
+    link(:index)  =>  link(:index, Post)
 
 NOT SURE:
+
+* Make Link2 parse label and title-attribute for the link based on configuration: Link2.label_method = :to_s, Link2.attr_methods = {:title => :description}
 
 * This works:
     link_to x, :terms   =>  link_to x, terms_path
@@ -24,16 +30,6 @@ NOT SURE:
     link :terms, :terms  <=>  link :terms   =>  link :terms, terms_path
 
   The middle part (auto-detect route for :fraggle before resource :fraggle) maybe too abstract DSL, not sure.
-
-* Check with Rails routes (RouteSet) if current action is a :member or :collection, and look for resource vs. collection:
-
-    link(:show)   =>  link(@post)     =>  link(:show, @post)      =>  link("Show", @posts)
-    link(:index)  =>  link(@posts)    =>  link(:index, @posts)    =>  link("Index", @posts)
-
-  Current implementation is a bit dumber but should work okay: resource_or_collection = @post || @posts, where
-  @post is tried first. Maybe should be developers responsibility like now...
-
-* Make Link2 parse label and title-attribute for the link based on configuration: Link2.label_method = :to_s, Link2.attr_methods = {:title => :description}
 
 * Add support for: #link_to_remote + #button_to_remote in Rails 2.x, with:
 
