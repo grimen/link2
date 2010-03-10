@@ -116,13 +116,6 @@ h2. Usage
   ...
 </pre>
 
-...and for the record (not yet implemented, but soon):
-
-<pre>
-  link :edit, [@post, @comment]
-    # => ::Link2::NotImplementedYetError, "case link(:action, [...]) not yet supported. Need to refactor some stuff."
-</pre>
-
 Same works for @button@, and you also can optionally use the branded aliases: @link2@ and @button2@.
 
 h2. URL + HTML Options
