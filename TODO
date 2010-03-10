@@ -1,16 +1,21 @@
 TODO
 
-1) [ISSUE:] Implement the problematic one: link(:action, [@parent, @resource])
+* [FEATURE:] Fix action mapping procs to handle named scopes. Should work, but do not for some reason. =/
 
-* Fix action mapping procs to handle named scopes. Should work, but do not for some reason. =/
+* [FEATURE:] Fix action mapping procs to receive session, params, etc in a options hash. My mocking/stubbing don't want to work. ='(
 
-* Fix action mapping procs to receive session, params, etc in a options hash. My mocking/stubbing don't want to work. ='(
+* [TEST:] Integration tests for namespaced controllers/models
 
-* Integration tests for namespaced controllers/models
+* [DESIGN:] Link2::Brain#link_to_args MUST be refactored when the DSL is 100% settled. Not far from it, but feedback first.
 
-* Check Rails 3 compatibility.
+* [DESIGN:] Merge #label_and_url_for_resource and #url_for_args
 
-* Link2::Brain#link_to_args MUST be refactored when the DSL is 100% settled. Not far from it, but feedback first.
+* [TEST:] ORM-tests: DataMapper, MongoMapper
+
+* [COMPAT:] Check Rails 3 compatibility.
+
+
+NOT SURE:
 
 * This works:
     link_to x, :terms   =>  link_to x, terms_path
@@ -19,10 +24,6 @@ TODO
     link :terms, :terms  <=>  link :terms   =>  link :terms, terms_path
 
   The middle part (auto-detect route for :fraggle before resource :fraggle) maybe too abstract DSL, not sure.
-
-* ORM-tests: DataMapper, MongoMapper
-
-NOT SURE:
 
 * Check with Rails routes (RouteSet) if current action is a :member or :collection, and look for resource vs. collection:
 

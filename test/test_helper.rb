@@ -44,7 +44,9 @@ end
 
 # Routes.
 ActionController::Routing::Routes.draw do |map|
-  map.resources :fraggles, :has_many => :cool_aids, :member => {:kick => :post}
+  map.resources :fraggles, :member => {:kick => :post} do |fraggles|
+    fraggles.resources :cool_aids, :member => {:kick => :post}
+  end
   map.resource :cool_aid
 
   map.root :controller => 'fraggles'

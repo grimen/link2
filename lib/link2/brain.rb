@@ -79,11 +79,6 @@ module Link2
               raise ArgumentError, "Invalid 2nd argument: #{args.inspect}"
             end
           elsif args.first.is_a?(Symbol)
-            # TODO: Implement support for array of nested resources.
-            if args.second.is_a?(Array)
-              raise ::Link2::NotImplementedYetError, "case link(:action, [...]) not yet supported. Need to refactor some stuff."
-            end
-
             if args.second.is_a?(String)
               # link :new, new_post_path  => link_to I18n.t(:new, ...), new_post_path
               # link :back, root_path  => link_to I18n.t(:back, ...), (session[:return_to] || :back)
@@ -102,6 +97,11 @@ module Link2
               action, resource = args.slice!(0..1)
               label = self.localized_label(action, resource, url_options)
               url = self.url_for_args(action, resource, url_options)
+            elsif args.second.is_a?(Array)
+              # link :kick, [:admin, @user]  => link_to I18n.t(:show, ...), admin_user_path(@user)
+              action, resource = args.slice!(0..1)
+              url_options_with_action = url_options.present? ? url_options.merge(:action => action) : {:action => action}
+              label, url = self.label_and_url_for_resource(resource, url_options_with_action)
             else
               raise ArgumentError, "Invalid 2nd argument: #{args.inspect}"
             end
@@ -111,16 +111,16 @@ module Link2
         when 3
           if args.first.is_a?(String)
             if args.second.is_a?(Symbol)
-              # TODO: Implement support for array of nested resources.
-              if args.third.is_a?(Array)
-                raise ::Link2::NotImplementedYetError, 'case link("Label", :action, [...]) not yet supported. Need to refactor some stuff.'
-              end
-
               if ::Link2::Support.resource_identifier_class?(args.third)
                 # link "New", :new, Post  => link_to "New", new_post_path
                 # link "Edit", :edit, @post  => link_to "Edit", edit_post_path(@post)
                 label, action, resource = args.slice!(0..2)
                 url = self.url_for_args(action, resource, url_options)
+              elsif args.third.is_a?(Array)
+                # link "Kick", :kick, [:admin, @user]  => link_to I18n.t(:show, ...), admin_user_path(@user)
+                label, action, resource = args.slice!(0..2)
+                url_options_with_action = url_options.present? ? url_options.merge(:action => action) : {:action => action}
+                url = self.label_and_url_for_resource(resource, url_options_with_action).last
               else
                 raise ArgumentError, "Invalid 3rd argument: #{args.inspect}"
               end
@@ -162,13 +162,18 @@ module Link2
       #
       # See documentation on +polymorphic_url+ for available core options.
       #
-      def label_and_url_for_resource(resource, options = {})
-        options ||= {}
+      def label_and_url_for_resource(*args)
+        options = args.extract_options!.dup
+        resource = args.first
+
         url_for_options = options.slice(*POLYMORPHIC_OPTION_KEYS).reverse_merge(:routing_type => :path)
         i18n_options = options.except(url_for_options.keys)
-        last_resource = ::Link2::Support.extract_resource(resource)
 
-        label = self.localized_label(:show, last_resource, i18n_options)
+        last_resource = ::Link2::Support.extract_resource(resource)
+        action = options.delete(:action)
+        url_for_options[:action] = [:show, :index].include?(action) ? nil : action
+
+        label = self.localized_label(action || :show, last_resource, i18n_options)
         url = polymorphic_url(resource, url_for_options)
 
         [label, url]

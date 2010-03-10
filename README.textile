@@ -19,7 +19,7 @@ This is *not* a re-implementation of these helpers; rather it wraps these but pa
 * *DRY* - based on specified arguments: Use what's know to make smart assumptions for more readable and maintainable view code.
 * *I18n deluxe* - Lookup scoped translations based on action, model, etc., for more flexible translations - with lean defaults. Enhanced with some nifty interpolation features as well. Code first, translate later.
 * *DOM Selectors* - Why defining DOM classes for RESTful links all the time when same patterns occur? Optionally DONE.
-* *Stable* - Full test-coverage for stability. Unit + Rails integration tests, check: @54 tests: all passed@
+* *Stable* - Full test-coverage for stability. Unit + Rails integration tests, check: @59 tests: all passed@
 * *Maintainable* - Well-documented code.
 
 h2. Installation
@@ -123,9 +123,9 @@ h2. Usage
     # => ::Link2::NotImplementedYetError, "case link(:action, [...]) not yet supported. Need to refactor some stuff."
 </pre>
 
-Same works for @button_to@, and you also can optionally use the branded aliases: @link2@ and @button2@.
+Same works for @button@, and you also can optionally use the branded aliases: @link2@ and @button2@.
 
-h2. Options hashes: URL + HTML Options
+h2. URL + HTML Options
 
 Link2 link helpers accept options in the same way as the core helpers @link_to@ and @button_to@: first @options@ (a.k.a. @url_options@) and then @html_options@. See the "Rails core UrlHelpers documentation":http://railsapi.com/doc/rails-v2.3.5/classes/ActionView/Helpers/UrlHelper.html#M002452 for details on this. Link2 helpers just pass any non-Link2-related options to the Rails core helpers. In other words no need to learn a new API; just pass the needed options like in the past.
 

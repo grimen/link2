@@ -169,11 +169,37 @@ class HelpersTest < ActionView::TestCase
     assert_equal link_to("Edit", "/fraggles/#{@mookey.id}/edit", *TWO_HASHES),  link(:edit, @mookey, *TWO_HASHES)
   end
 
-  test "link(:action, [@parent, @resource]) should render link_to(t(:action, ...), polymorphic_path([@parent, @resource]), :action => :action)" do
-    # assert_equal link_to("Edit", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}/edit"), link(:edit, [@mookey, @mookeys_cool_aid])
-    assert_raise(::Link2::NotImplementedYetError) { link(:edit, [@mookey, @mookeys_cool_aid]) }
-    assert_raise(::Link2::NotImplementedYetError) { link(:edit, [@mookey, @mookeys_cool_aid], ONE_HASH) }
-    assert_raise(::Link2::NotImplementedYetError) { link(:edit, [@mookey, @mookeys_cool_aid], *TWO_HASHES) }
+  test "should accept polymorphic resource array for valid actions" do
+    [:edit, :show, :kick, :index].each do |action|
+      assert_nothing_raised { link(action, [@mookey, @mookeys_cool_aid]) }
+      assert_nothing_raised { link(action, [@mookey, @mookeys_cool_aid], ONE_HASH) }
+      assert_nothing_raised { link(action, [@mookey, @mookeys_cool_aid], *TWO_HASHES) }
+    end
+  end
+
+  test "should raise the traditional error if generated route don't exists" do
+    assert_raise(NoMethodError) { link(:hug, [@mookey, @mookeys_cool_aid]) }
+    assert_raise(NoMethodError) { link(:hug, [@mookey, @mookeys_cool_aid], ONE_HASH) }
+    assert_raise(NoMethodError) { link(:hug, [@mookey, @mookeys_cool_aid], *TWO_HASHES) }
+  end
+
+  test "link(:action, [@a, @b]) should render link_to(t(:action, ...), polymorphic_path([@a, @b]), :action => :action)" do
+    assert_equal link_to("Edit", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}/edit"),               link(:edit, [@mookey, @mookeys_cool_aid])
+    assert_equal link_to("Edit", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}/edit", ONE_HASH),     link(:edit, [@mookey, @mookeys_cool_aid], ONE_HASH)
+    assert_equal link_to("Edit", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}/edit", *TWO_HASHES),  link(:edit, [@mookey, @mookeys_cool_aid], *TWO_HASHES)
+
+    assert_equal link_to("Show", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}"),                    link(:show, [@mookey, @mookeys_cool_aid])
+    assert_equal link_to("Show", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}", ONE_HASH),          link(:show, [@mookey, @mookeys_cool_aid], ONE_HASH)
+    assert_equal link_to("Show", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}", *TWO_HASHES),       link(:show, [@mookey, @mookeys_cool_aid], *TWO_HASHES)
+
+    assert_equal link_to("Kick", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}/kick"),               link(:kick, [@mookey, @mookeys_cool_aid])
+    assert_equal link_to("Kick", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}/kick", ONE_HASH),     link(:kick, [@mookey, @mookeys_cool_aid], ONE_HASH)
+    assert_equal link_to("Kick", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}/kick", *TWO_HASHES),  link(:kick, [@mookey, @mookeys_cool_aid], *TWO_HASHES)
+
+    # QUESTION: Hum...should be a case?
+    # assert_equal link_to("Index", "/fraggles/#{@mookey.id}/cool_aids"),               link(:index, [@mookey, @mookeys_cool_aid])
+    # assert_equal link_to("Index", "/fraggles/#{@mookey.id}/cool_aids", ONE_HASH),     link(:index, [@mookey, @mookeys_cool_aid], ONE_HASH)
+    # assert_equal link_to("Index", "/fraggles/#{@mookey.id}/cool_aids", *TWO_HASHES),  link(:index, [@mookey, @mookeys_cool_aid], *TWO_HASHES)
   end
 
   test "auto-detecting resource: link(label, :action) should render link_to(label, @resource, :action => :action)" do
@@ -222,6 +248,39 @@ class HelpersTest < ActionView::TestCase
     assert_equal link_to("Editish", "/fraggles/#{@mookey.id}/edit"),              link("Editish", :edit, @mookey)
     assert_equal link_to("Editish", "/fraggles/#{@mookey.id}/edit", ONE_HASH),    link("Editish", :edit, @mookey, ONE_HASH)
     assert_equal link_to("Editish", "/fraggles/#{@mookey.id}/edit", *TWO_HASHES), link("Editish", :edit, @mookey, *TWO_HASHES)
+  end
+
+  test "three arguments: should accept polymorphic resource array for valid actions" do
+    [:edit, :show, :kick, :index].each do |action|
+      assert_nothing_raised { link("", action, [@mookey, @mookeys_cool_aid]) }
+      assert_nothing_raised { link("", action, [@mookey, @mookeys_cool_aid], ONE_HASH) }
+      assert_nothing_raised { link("", action, [@mookey, @mookeys_cool_aid], *TWO_HASHES) }
+    end
+  end
+
+  test "three arguments: should raise the traditional error if generated route don't exists" do
+    assert_raise(NoMethodError) { link("", :hug, [@mookey, @mookeys_cool_aid]) }
+    assert_raise(NoMethodError) { link("", :hug, [@mookey, @mookeys_cool_aid], ONE_HASH) }
+    assert_raise(NoMethodError) { link("", :hug, [@mookey, @mookeys_cool_aid], *TWO_HASHES) }
+  end
+
+  test "three arguments: link(:action, [@a, @b]) should render link_to(t(:action, ...), polymorphic_path([@a, @b]), :action => :action)" do
+    assert_equal link_to("", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}/edit"),               link("", :edit, [@mookey, @mookeys_cool_aid])
+    assert_equal link_to("", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}/edit", ONE_HASH),     link("", :edit, [@mookey, @mookeys_cool_aid], ONE_HASH)
+    assert_equal link_to("", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}/edit", *TWO_HASHES),  link("", :edit, [@mookey, @mookeys_cool_aid], *TWO_HASHES)
+
+    assert_equal link_to("", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}"),                    link("", :show, [@mookey, @mookeys_cool_aid])
+    assert_equal link_to("", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}", ONE_HASH),          link("", :show, [@mookey, @mookeys_cool_aid], ONE_HASH)
+    assert_equal link_to("", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}", *TWO_HASHES),       link("", :show, [@mookey, @mookeys_cool_aid], *TWO_HASHES)
+
+    assert_equal link_to("", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}/kick"),               link("", :kick, [@mookey, @mookeys_cool_aid])
+    assert_equal link_to("", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}/kick", ONE_HASH),     link("", :kick, [@mookey, @mookeys_cool_aid], ONE_HASH)
+    assert_equal link_to("", "/fraggles/#{@mookey.id}/cool_aids/#{@mookeys_cool_aid.id}/kick", *TWO_HASHES),  link("", :kick, [@mookey, @mookeys_cool_aid], *TWO_HASHES)
+
+    # QUESTION: Hum...should be a case?
+    # assert_equal link_to("", "/fraggles/#{@mookey.id}/cool_aids"),               link("", :index, [@mookey, @mookeys_cool_aid])
+    # assert_equal link_to("", "/fraggles/#{@mookey.id}/cool_aids", ONE_HASH),     link("", :index, [@mookey, @mookeys_cool_aid], ONE_HASH)
+    # assert_equal link_to("", "/fraggles/#{@mookey.id}/cool_aids", *TWO_HASHES),  link("", :index, [@mookey, @mookeys_cool_aid], *TWO_HASHES)
   end
 
   # Nil
