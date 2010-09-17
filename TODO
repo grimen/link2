@@ -1,5 +1,9 @@
 TODO
 
+* [BUG:] link "+", @post failed
+
+  [BUG:] XSS-issue with labels.
+
 * [FEATURE:] Fix action mapping procs to handle named scopes. Should work, but do not for some reason. =/
 
 * [FEATURE:] Fix action mapping procs to receive session, params, etc in a options hash. My mocking/stubbing don't want to work. ='(
