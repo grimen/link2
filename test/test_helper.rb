@@ -2,7 +2,7 @@
 require 'rubygems'
 
 ENV['RAILS_ENV'] = 'test'
-TEST_ORM = (ENV['ORM'] || :active_record).to_sym
+TEST_ORM = (ENV['ORM'] || :active_record).to_sym unless defined?(TEST_ORM)
 
 # ORM / Schema.
 require File.join(File.dirname(__FILE__), 'orm', TEST_ORM.to_s)

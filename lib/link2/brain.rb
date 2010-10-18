@@ -292,9 +292,9 @@ module Link2
 
         if ::Link2::Support.record_object?(resource)
           # Skip any ugly default to_s-value:
-          custom_name = resource.to_s =~ CLASS_INSTANCE_STRING ? resource_class.human_name.downcase : resource.to_s
+          custom_name = resource.to_s =~ CLASS_INSTANCE_STRING ? (resource_class.model_name.human rescue resource_class.human_name).downcase : resource.to_s
         end
-        custom_name = resource_class.human_name.downcase if custom_name.blank?
+        custom_name = (resource_class.model_name.human rescue resource_class.human_name).downcase if custom_name.blank?
         custom_name
       end
 

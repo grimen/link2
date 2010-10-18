@@ -87,13 +87,13 @@ class BrainTest < ActionView::TestCase
   end
 
   test "#label_and_url_for_resource: should parse a label and url from a object (e.g. @post)" do
-    store_translations :en, {:links => {:show => "Show {{resource}}"}} do
+    store_translations :en, {:links => {:show => "Show %{resource}"}} do
       assert_equal ["Show fraggle", fraggle_path(@mookey)], label_and_url_for_resource(@mookey)
     end
   end
 
   test "#label_and_url_for_resource: should parse a label and url from a object (e.g. @post) with respect to to_s-value" do
-    store_translations :en, {:links => {:show => "Show {{name}}"}} do
+    store_translations :en, {:links => {:show => "Show %{name}"}} do
       @mookey.class_eval do
         def to_s
           ""
@@ -113,7 +113,7 @@ class BrainTest < ActionView::TestCase
   test "#label_and_url_for_resource: should parse correct label and url from a polymorphic args (e.g. [@user, :blog, @post])" do
     @mookeys_cool_aid = ::CoolAid.create(:name => 'Super-tasty')
 
-    store_translations :en, {:links => {:show => "Show {{name}}"}} do
+    store_translations :en, {:links => {:show => "Show %{name}"}} do
       @mookeys_cool_aid.class_eval do
         def to_s
           self.name

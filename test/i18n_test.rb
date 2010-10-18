@@ -47,9 +47,9 @@ class I18nTest < ActiveSupport::TestCase
     end
   end
 
-  test "i18n: should be able to translate action with respect to any valid extra interpolation arguments" do
+  test "i18n: should be able to translate action with respect to any valid " do
     swap ::Link2, :i18n_scopes => ['links.{{action}}'] do
-      store_translations :en, {:links => {:shout => 'Hello {{nick}}!'}} do
+      store_translations :en, {:links => {:shout => 'Hello %{nick}!'}} do
         i18n_options = {:scope => 'links', :nick => 'Mokey'}
 
         assert_equal ::I18n.t(:shout, i18n_options), ::Link2::I18n.t(:shout, ::Fraggle.new, :nick => 'Mokey')
@@ -59,7 +59,7 @@ class I18nTest < ActiveSupport::TestCase
 
   test "i18n: should not interpolate values for any reserved interpolation keys" do
     swap ::Link2, :i18n_scopes => ['links.{{action}}'] do
-      store_translations :en, {:links => {:shout => 'Hello {{scope}}!'}} do
+      store_translations :en, {:links => {:shout => 'Hello %{scope}!'}} do
         i18n_options = {:scope => 'links', :name => 'Mokey'}
 
         assert_raise(I18n::ReservedInterpolationKey) { ::Link2::I18n.t(:shout, ::Fraggle.new, :scope => 'Mokey') }
