@@ -14,8 +14,6 @@ TODO
 
 * [DESIGN:] Merge #label_and_url_for_resource and #url_for_args
 
-* [TEST:] ORM-tests: DataMapper, MongoMapper
-
 * [COMPAT:] Check Rails 3 compatibility.
 
 * [ENHANCEMENT:] Check with Rails routes (RouteSet) if current action is a :member or :collection:
@@ -24,6 +22,8 @@ TODO
     link(:index)  =>  link(:index, Post)
 
 NOT SURE:
+
+* [TEST:] ORM-tests: DataMapper, MongoMapper
 
 * Make Link2 parse label and title-attribute for the link based on configuration: Link2.label_method = :to_s, Link2.attr_methods = {:title => :description}
 

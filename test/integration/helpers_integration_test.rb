@@ -8,6 +8,8 @@ class HelpersIntegrationTest < ActionController::IntegrationTest
     assert_response :success
     assert_template 'home/index'
 
+    puts response.body.inspect
+
     assert_contain "WIN"
   end
 
