@@ -132,6 +132,20 @@ module Link2
       def record_object?(object)
         object.respond_to?(:new_record?)
       end
+
+      # Get the human name for an object/class - in both Rails 2.3 and Rails 3.
+      #
+      # == Usage/Examples:
+      #
+      #   human_name_for(CoolStuff)
+      #
+      #     # => "Cool stuff"
+      #
+      #   ...or something like that.
+      #
+      def human_name_for(object)
+        object.model_name.human rescue object.human_name
+      end
     end
 
   end

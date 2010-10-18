@@ -96,7 +96,7 @@ module Link2
         #
         def localized_resource_class_name(resource)
           resource_class = ::Link2::Support.find_resource_class(resource)
-          resource_name = resource_class.human_name rescue resource_class.to_s.humanize
+          resource_name = ::Link2::Support.human_name_for(resource_class) rescue resource_class.to_s.humanize
           resource_name.underscore
         end
 
