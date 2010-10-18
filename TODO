@@ -1,8 +1,10 @@
 TODO
 
+* [COMPAT:] Check Rails 3 compatibility.
+
 * [BUG:] link "+", @post failed
 
-  [BUG:] XSS-issue with labels.
+* [BUG:] XSS-issue with labels. (NOTE: Needs more details when this happen, could not reproduce in integration test)
 
 * [FEATURE:] Fix action mapping procs to handle named scopes. Should work, but do not for some reason. =/
 
@@ -10,11 +12,9 @@ TODO
 
 * [TEST:] Integration tests for namespaced controllers/models
 
-* [DESIGN:] Link2::Brain#link_to_args MUST be refactored when the DSL is 100% settled. Not far from it, but feedback first.
+* [DESIGN:] Link2::Brain#link_to_args should maybe be split into multiple methods when API is settled.
 
 * [DESIGN:] Merge #label_and_url_for_resource and #url_for_args
-
-* [COMPAT:] Check Rails 3 compatibility.
 
 * [ENHANCEMENT:] Check with Rails routes (RouteSet) if current action is a :member or :collection:
 
@@ -31,12 +31,6 @@ NOT SURE:
     link_to x, :terms   =>  link_to x, terms_path
 
   So maybe this should work the same?:
-    link :terms, :terms  <=>  link :terms   =>  link :terms, terms_path
+   link :terms   =>  link :terms, terms_pat  ( <=>  link :terms, :terms )
 
   The middle part (auto-detect route for :fraggle before resource :fraggle) maybe too abstract DSL, not sure.
-
-* Add support for: #link_to_remote + #button_to_remote in Rails 2.x, with:
-
-    link(..., :remote => true)
-
-  ...or not: Maybe only support in Rails 3.
