@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    link2 (0.1.8)
+    link2 (0.1.9)
       actionpack (>= 2.3.0)
       activesupport (>= 2.3.0)
 
@@ -51,6 +51,7 @@ GEM
     rake (0.8.7)
     rubyforge (2.0.4)
       json_pure (>= 1.1.7)
+    sqlite3-ruby (1.3.2)
     test-unit (1.2.3)
       hoe (>= 1.5.1)
     tzinfo (0.3.23)
@@ -69,5 +70,6 @@ DEPENDENCIES
   leftright (>= 0.0.3)
   link2!
   mocha (>= 0.9.8)
+  sqlite3-ruby
   test-unit (= 1.2.3)
   webrat (>= 0.7.0)

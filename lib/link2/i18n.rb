@@ -7,7 +7,6 @@ module Link2
 
     VALID_SCOPE_VARIABLES = [:controller, :action, :resource, :resources].freeze
     INTERPOLATION_SYNTAX_PATTERN = /(\\)?\{\{([^\}]+)\}\}/
-    RESERVED_KEYS = ::I18n::Backend::Base::RESERVED_KEYS
 
     class << self
 
