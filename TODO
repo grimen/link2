@@ -1,5 +1,11 @@
 TODO
 
+* [COMPAT:] Fix compatibility with rubinius and jruby:
+
+    RuntimeError: test_#link2_attrbutes_for:_should_generate_Link2-specific_DOM_classes_reflecting_on_action,_resource_class,_and_resource_id_-_if_given is already defined in BrainTest
+
+    Reason: link2 is symlinked from the bundled rails dummy project - tries to declare same methods twice.
+
 * [COMPAT:] Check Rails 3 compatibility.
 
 * [BUG:] link "+", @post failed
