@@ -6,4 +6,4 @@ rvm:
   - rbx
   # - jruby
 env:
-  - ORM=activerecord
+  - ORM=active_record
