@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 ActionController::Routing::Routes.draw do |map|
 
   map.root :controller => 'home'

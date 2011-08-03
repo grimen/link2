@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 Link2.setup do |config|
   # Configure how - and in what order - link labels should be looked up.
   config.i18n_scopes = [
