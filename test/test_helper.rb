@@ -1,5 +1,7 @@
-# encoding: utf-8
+# -*- encoding: utf-8 -*-
 require 'rubygems'
+require 'bundler'
+Bundler.require
 
 ENV['RAILS_ENV'] = 'test'
 TEST_ORM = (ENV['ORM'] || :active_record).to_sym unless defined?(TEST_ORM)
@@ -7,23 +9,15 @@ TEST_ORM = (ENV['ORM'] || :active_record).to_sym unless defined?(TEST_ORM)
 # ORM / Schema.
 require File.join(File.dirname(__FILE__), 'orm', TEST_ORM.to_s)
 
-gem 'test-unit', '1.2.3'
 require 'test/unit'
-
+require 'mocha'
+require 'webrat'
 begin
   require 'leftright'
 rescue LoadError
 end
 
-# require 'active_support'
-# require 'action_controller'
-# require 'active_record'
-
-require 'mocha'
-require 'webrat'
-
-require 'active_support/test_case'
-require 'action_view/test_case'
+require 'link2'
 
 # Support.
 Dir[File.join(File.dirname(__FILE__), *%w[support ** *.rb]).to_s].each { |f| require f }

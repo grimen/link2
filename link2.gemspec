@@ -14,14 +14,17 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'activesupport', '>= 2.3.0'
   s.add_dependency 'actionpack', '>= 2.3.0'
+  s.add_dependency 'erubis'
 
+  s.add_development_dependency 'bundler', '~> 1.0.0'
   s.add_development_dependency 'rake'
-  s.add_development_dependency 'test-unit', '= 1.2.3'
-  s.add_development_dependency 'mocha', '>= 0.9.8'
-  s.add_development_dependency 'webrat', '>= 0.7.0'
-  s.add_development_dependency 'leftright', '>= 0.0.3'
-  s.add_development_dependency 'activerecord', '>= 2.3.0'
+  s.add_development_dependency 'rdoc'
+  s.add_development_dependency 'test-unit', '1.2.3'
+  s.add_development_dependency 'mocha'
+  s.add_development_dependency 'webrat'
+  s.add_development_dependency 'leftright'
   s.add_development_dependency 'sqlite3-ruby'
+  s.add_development_dependency 'rails', '2.3.12'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

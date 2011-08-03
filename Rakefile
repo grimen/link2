@@ -2,7 +2,7 @@ require 'bundler'
 Bundler::GemHelper.install_tasks
 require 'rake'
 require 'rake/testtask'
-require 'rake/rdoctask'
+require 'rdoc/task'
 
 # Gem managment tasks.
 #
@@ -23,10 +23,9 @@ end
 
 desc 'Generate documentation for the plugin.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = ''
+  rdoc.rdoc_dir = 'doc'
+  rdoc.main = 'README.textile'
   rdoc.options << '--line-numbers' << '--inline-source'
-  rdoc.rdoc_files.include('README')
-  rdoc.rdoc_files.include('init.rb')
+  rdoc.rdoc_files.include('README.textile')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end

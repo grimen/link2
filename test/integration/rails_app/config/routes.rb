@@ -8,8 +8,4 @@ ActionController::Routing::Routes.draw do |map|
     ponies.resources :ponies
   end
 
-  # WHY?: Tests fails when these are enabled.
-  # map.connect ':controller/:action/:id'
-  # map.connect ':controller/:action/:id.:format'
-
 end

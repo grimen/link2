@@ -1,5 +1,5 @@
 # encoding: utf-8
-require 'test/test_helper'
+require 'test_helper'
 
 class HelpersIntegrationTest < ActionController::IntegrationTest
 

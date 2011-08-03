@@ -1,17 +1,6 @@
 # encoding: utf-8
-begin
-  require 'active_support'
-rescue LoadError
-  gem 'activesupport'
-  require 'active_support'
-end
-
-begin
-  require 'action_view'
-rescue LoadError
-  gem 'actionpack'
-  require 'action_view'
-end
+require 'active_support'
+require 'action_view'
 
 module Link2
 
