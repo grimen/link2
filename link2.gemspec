@@ -25,6 +25,9 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'leftright'
   s.add_development_dependency 'sqlite3-ruby'
   s.add_development_dependency 'rails', '2.3.12'
+  s.add_development_dependency 'guard'
+  s.add_development_dependency 'guard-bundler'
+  s.add_development_dependency 'guard-test'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
