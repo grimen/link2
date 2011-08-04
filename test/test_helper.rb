@@ -16,6 +16,9 @@ begin
   require 'leftright'
 rescue LoadError
 end
+require 'action_controller'
+require 'action_view/test_case'
+require 'active_support/test_case'
 
 require 'link2'
 
