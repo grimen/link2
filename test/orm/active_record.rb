@@ -1,6 +1,6 @@
 # encoding: utf-8
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'integration', 'rails_app', 'config', 'environment'))
-require 'test_help'
+require 'test_helper'
 
 ActiveRecord::Migration.verbose = false
 ActiveRecord::Base.logger = Logger.new(nil)

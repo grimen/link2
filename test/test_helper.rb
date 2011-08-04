@@ -45,5 +45,3 @@ ActionController::Routing::Routes.draw do |map|
 
   map.root :controller => 'fraggles'
 end
-
-require 'link2'
