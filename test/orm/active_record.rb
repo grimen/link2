@@ -23,7 +23,7 @@ ActiveRecord::Schema.define(:version => 1) do
   end
 end
 
-class ActiveSupport::TestCase
-  self.use_transactional_fixtures = true
-  self.use_instantiated_fixtures  = false
-end
+# class ActiveSupport::TestCase
+#   self.use_transactional_fixtures = true
+#   self.use_instantiated_fixtures  = false
+# end
