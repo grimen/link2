@@ -4,6 +4,6 @@ rvm:
   - ree
   - ruby-head
   - rbx
-  # - jruby
+  - rbx-2.0
 env:
   - ORM=active_record
